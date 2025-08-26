@@ -1,0 +1,23 @@
+[
+  {
+    "case": "Missing inputMint",
+    "expectedStatus": 400,
+    "inputMint": "",
+    "outputMint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+    "amount": "100000"
+  },
+  {
+    "case": "Missing outputMint",
+    "expectedStatus": 400,
+    "inputMint": "So11111111111111111111111111111111111111112",
+    "outputMint": "",
+    "amount": "100000"
+  },
+  {
+    "case": "Missing amount",
+    "expectedStatus": 400,
+    "inputMint": "So11111111111111111111111111111111111111112",
+    "outputMint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+    "amount": ""
+  }
+]

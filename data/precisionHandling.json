@@ -1,0 +1,42 @@
+[
+  {
+    "case": "BONK to SOL minimal amount",
+    "inputMint": "{{BONK}}",
+    "outputMint": "{{wSOL}}",
+    "amount": 1,
+    "decimalsInput": 5,
+    "decimalsOutput": 9
+  },
+  {
+    "case": "SOL to USDC minimal amount",
+    "inputMint": "{{wSOL}}",
+    "outputMint": "{{USDC}}",
+    "amount": 1,
+    "decimalsInput": 9,
+    "decimalsOutput": 6
+  },
+  {
+    "case": "BONK to USDC minimal amount",
+    "inputMint": "{{BONK}}",
+    "outputMint": "{{USDC}}",
+    "amount": 1,
+    "decimalsInput": 5,
+    "decimalsOutput": 6
+  },
+  {
+    "case": "SOL to BONK minimal amount",
+    "inputMint": "{{wSOL}}",
+    "outputMint": "{{BONK}}",
+    "amount": 1,
+    "decimalsInput": 9,
+    "decimalsOutput": 5
+  },
+  {
+    "case": "USDC to SOL minimal amount",
+    "inputMint": "{{USDC}}",
+    "outputMint": "{{wSOL}}",
+    "amount": 1,
+    "decimalsInput": 6,
+    "decimalsOutput": 9
+  }
+]

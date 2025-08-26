@@ -1,0 +1,22 @@
+[
+  {
+    "case": "Invalid query value",
+    "expectedStatus": 400,
+    "query": "invalidValue"
+  },
+  {
+    "case": "Empty query value",
+    "expectedStatus": 400,
+    "query": ""
+  },
+  {
+    "case": "Query param is null",
+    "expectedStatus": 400,
+    "query": null
+  },
+  {
+    "case": "Query param missing completely",
+    "expectedStatus": 400,
+    "query": "{{omit}}"
+  }
+]

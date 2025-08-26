@@ -1,0 +1,12 @@
+[
+  { "field": "slippageBps", "value": -10 },
+  { "field": "swapMode", "value": "InvalidMode" },
+  { "field": "dexes", "value": ["NonExistentDEX"] },
+  { "field": "excludeDexes", "value": ["NonExistentDEX"] },
+  { "field": "restrictIntermediateTokens", "value": "notABoolean" },
+  { "field": "onlyDirectRoutes", "value": "notABoolean" },
+  { "field": "asLegacyTransaction", "value": "notABoolean" },
+  { "field": "platformFeeBps", "value": 100000 },
+  { "field": "maxAccounts", "value": -5 },
+  { "field": "dynamicSlippage", "value": "notABoolean" }
+]

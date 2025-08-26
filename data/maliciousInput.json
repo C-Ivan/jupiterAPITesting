@@ -1,0 +1,7 @@
+[
+  { "maliciousInput": "'; DROP TABLE users; --" },
+  { "maliciousInput": "<script>alert(1)</script>" },
+  { "maliciousInput": "🙂💥🔥🐍" },
+  { "maliciousInput": "../../../../etc/passwd" },
+  { "maliciousInput": "🧑‍💻';shutdown --now;" }
+]

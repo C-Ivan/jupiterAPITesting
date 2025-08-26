@@ -1,0 +1,2426 @@
+{
+	"info": {
+		"_postman_id": "c3961428-af39-44e6-891a-6a6dfb18eb8f",
+		"name": "Jupiter - automated",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "4415733"
+	},
+	"item": [
+		{
+			"name": "happyPath",
+			"item": [
+				{
+					"name": "TC 1 - Quote - Retrieve quote of supported token mints - only required fields",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"eval(pm.globals.get(\"basicQuoteValidation\"));\r",
+									"basicQuoteValidation(pm.response.json());"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{SwapAPI}}/quote?inputMint={{wSOL}}&outputMint={{USDC}}&amount=100000",
+							"host": [
+								"{{SwapAPI}}"
+							],
+							"path": [
+								"quote"
+							],
+							"query": [
+								{
+									"key": "inputMint",
+									"value": "{{wSOL}}"
+								},
+								{
+									"key": "outputMint",
+									"value": "{{USDC}}"
+								},
+								{
+									"key": "amount",
+									"value": "100000"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TC 2 - Quote - Retrieve quote of supported token mints - include optional fields",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"eval(pm.globals.get(\"basicQuoteValidation\"));\r",
+									"basicQuoteValidation(pm.response.json());"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{SwapAPI}}/quote?inputMint={{wSOL}}&outputMint={{USDC}}&amount=100000&slippageBps=50&swapMode=ExactIn&excludeDexes=Raydium&restrictIntermediateTokens=true&onlyDirectRoutes=false&asLegacyTransaction=false&platformFeeBps=50&maxAccounts=50&dynamicSlippage=true",
+							"host": [
+								"{{SwapAPI}}"
+							],
+							"path": [
+								"quote"
+							],
+							"query": [
+								{
+									"key": "inputMint",
+									"value": "{{wSOL}}"
+								},
+								{
+									"key": "outputMint",
+									"value": "{{USDC}}"
+								},
+								{
+									"key": "amount",
+									"value": "100000"
+								},
+								{
+									"key": "slippageBps",
+									"value": "50"
+								},
+								{
+									"key": "swapMode",
+									"value": "ExactIn"
+								},
+								{
+									"key": "dexes",
+									"value": "Orca+V2,Meteora+DLMM",
+									"disabled": true
+								},
+								{
+									"key": "excludeDexes",
+									"value": "Raydium"
+								},
+								{
+									"key": "restrictIntermediateTokens",
+									"value": "true"
+								},
+								{
+									"key": "onlyDirectRoutes",
+									"value": "false"
+								},
+								{
+									"key": "asLegacyTransaction",
+									"value": "false"
+								},
+								{
+									"key": "platformFeeBps",
+									"value": "50"
+								},
+								{
+									"key": "maxAccounts",
+									"value": "50"
+								},
+								{
+									"key": "dynamicSlippage",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TC 3 - Swap - Successful swap transaction generation from a prior quote",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"eval(pm.globals.get(\"basicSwapValidation\"));\r",
+									"basicSwapValidation(pm.response.json());"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const swapApiUrl = pm.variables.replaceIn(\"{{SwapAPI}}\");\r",
+									"\r",
+									"// Define query params for quote\r",
+									"const inputMint = pm.collectionVariables.get(\"wSOL\");\r",
+									"const outputMint = pm.collectionVariables.get(\"USDC\"); \r",
+									"const amount = 1000000; // 0.001 SOL with 9 decimals\r",
+									"const slippageBps = 50; // 0.5%\r",
+									"const onlyDirectRoutes = true;\r",
+									"\r",
+									"const url = `${swapApiUrl}/quote?inputMint=${inputMint}&outputMint=${outputMint}&amount=${amount}&slippageBps=${slippageBps}&onlyDirectRoutes=${onlyDirectRoutes}`;\r",
+									"\r",
+									"pm.sendRequest({\r",
+									"    url: url,\r",
+									"    method: \"GET\",\r",
+									"    header: {\r",
+									"        \"Accept\": \"application/json\"\r",
+									"    }\r",
+									"}, (err, res) => {\r",
+									"    if (err) {\r",
+									"        console.error(\"Quote request failed:\", err);\r",
+									"    } else {\r",
+									"        const json = res.json();\r",
+									"        console.log(\"Quote Response:\", json);\r",
+									"\r",
+									"        // Save entire quote response for later use\r",
+									"        pm.variables.set(\"lastQuote\", JSON.stringify(json));\r",
+									"\r",
+									"        // Check routePlan length to ensure there is exactly one route plan item.\r",
+									"        const routeLength = json.routePlan.length;\r",
+									"        pm.expect(routeLength).to.eql(1);\r",
+									"\r",
+									"    }\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userPublicKey\": \"jdocuPgEAjMfihABsPgKEvYtsmMzjUHeq9LX4Hvs7f3\",\r\n  \"quoteResponse\": {{lastQuote}},\r\n  \"prioritizationFeeLamports\": {\r\n    \"priorityLevelWithMaxLamports\": {\r\n      \"maxLamports\": 10000000,\r\n      \"priorityLevel\": \"veryHigh\"\r\n    }\r\n  },\r\n  \"dynamicComputeUnitLimit\": true,\r\n  \"dynamicSlippage\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{SwapAPI}}/swap",
+							"host": [
+								"{{SwapAPI}}"
+							],
+							"path": [
+								"swap"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TC 4 - Swap - Successful swap transaction generation from a prior quote - multi-hop",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const swapApiUrl = pm.variables.replaceIn(\"{{SwapAPI}}\");\r",
+									"\r",
+									"// Define query params for quote\r",
+									"const inputMint = pm.collectionVariables.get(\"PENGU\");\r",
+									"const outputMint = pm.collectionVariables.get(\"Pump\"); \r",
+									"const amount = 1000; // 0.001 PENGU with 6 decimals\r",
+									"const slippageBps = 50; // 0.5%\r",
+									"\r",
+									"const url = `${swapApiUrl}/quote?inputMint=${inputMint}&outputMint=${outputMint}&amount=${amount}&slippageBps=${slippageBps}`;\r",
+									"\r",
+									"pm.sendRequest({\r",
+									"    url: url,\r",
+									"    method: \"GET\",\r",
+									"    header: {\r",
+									"        \"Accept\": \"application/json\"\r",
+									"    }\r",
+									"}, (err, res) => {\r",
+									"    if (err) {\r",
+									"        console.error(\"Quote request failed:\", err);\r",
+									"    } else {\r",
+									"        const json = res.json();\r",
+									"        console.log(\"Quote Response:\", json);\r",
+									"\r",
+									"        // Save entire quote response for later use (e.g. swap)\r",
+									"        pm.variables.set(\"lastQuote\", JSON.stringify(json));\r",
+									"\r",
+									"         // Check routePlan length to ensure there is more than one route plan item.\r",
+									"        const routeLength = json.routePlan.length;\r",
+									"        pm.expect(routeLength).to.above(1);\r",
+									"\r",
+									"        // Also save common fields individually if needed\r",
+									"        if (json.routePlan) {\r",
+									"            pm.variables.set(\"lastRoutePlan\", JSON.stringify(json.routePlan));\r",
+									"        }\r",
+									"        if (json.inAmount) {\r",
+									"            pm.variables.set(\"lastInAmount\", json.inAmount);\r",
+									"        }\r",
+									"    }\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"eval(pm.globals.get(\"basicSwapValidation\"));\r",
+									"basicSwapValidation(pm.response.json());"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userPublicKey\": \"jdocuPgEAjMfihABsPgKEvYtsmMzjUHeq9LX4Hvs7f3\",\r\n  \"quoteResponse\": {{lastQuote}},\r\n  \"prioritizationFeeLamports\": {\r\n    \"priorityLevelWithMaxLamports\": {\r\n      \"maxLamports\": 10000000,\r\n      \"priorityLevel\": \"veryHigh\"\r\n    }\r\n  },\r\n  \"dynamicComputeUnitLimit\": true,\r\n  \"dynamicSlippage\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{SwapAPI}}/swap",
+							"host": [
+								"{{SwapAPI}}"
+							],
+							"path": [
+								"swap"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TC 5 - Swap Instructions - Successful generation of swap instructions from a prior quote",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const swapApiUrl = pm.variables.replaceIn(\"{{SwapAPI}}\");\r",
+									"\r",
+									"// Define query params for quote\r",
+									"const inputMint = pm.collectionVariables.get(\"wSOL\");\r",
+									"const outputMint = pm.collectionVariables.get(\"USDC\"); \r",
+									"const amount = 1000000; // 0.001 SOL with 9 decimals\r",
+									"const slippageBps = 50; // 0.5%\r",
+									"\r",
+									"const url = `${swapApiUrl}/quote?inputMint=${inputMint}&outputMint=${outputMint}&amount=${amount}&slippageBps=${slippageBps}`;\r",
+									"\r",
+									"pm.sendRequest({\r",
+									"    url: url,\r",
+									"    method: \"GET\",\r",
+									"    header: {\r",
+									"        \"Accept\": \"application/json\"\r",
+									"    }\r",
+									"}, (err, res) => {\r",
+									"    if (err) {\r",
+									"        console.error(\"Quote request failed:\", err);\r",
+									"    } else {\r",
+									"        const json = res.json();\r",
+									"        console.log(\"Quote Response:\", json);\r",
+									"\r",
+									"        // Save entire quote response for later use\r",
+									"        pm.variables.set(\"quoteResponse\", JSON.stringify(json));\r",
+									"    }\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"eval(pm.globals.get(\"basicSwapInstructionsValidation\"));\r",
+									"basicSwapInstructionsValidation(pm.response.json());"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userPublicKey\": \"jdocuPgEAjMfihABsPgKEvYtsmMzjUHeq9LX4Hvs7f3\",\r\n  \"quoteResponse\": {{quoteResponse}},\r\n  \"prioritizationFeeLamports\": {\r\n    \"priorityLevelWithMaxLamports\": {\r\n      \"maxLamports\": 10000000,\r\n      \"priorityLevel\": \"veryHigh\"\r\n    }\r\n  },\r\n  \"dynamicComputeUnitLimit\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{SwapAPI}}/swap-instructions",
+							"host": [
+								"{{SwapAPI}}"
+							],
+							"path": [
+								"swap-instructions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TC 6 - Tokens - Search by symbol",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"eval(pm.globals.get(\"basicTokenSearchValidation\"));\r",
+									"basicTokenSearchValidation(pm.response.json(), true);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{TokenAPI}}/search?query=PENGU",
+							"host": [
+								"{{TokenAPI}}"
+							],
+							"path": [
+								"search"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "PENGU"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TC 7 - Tokens - Search by name",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"eval(pm.globals.get(\"basicTokenSearchValidation\"));\r",
+									"basicTokenSearchValidation(pm.response.json());"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{TokenAPI}}/search?query=U mad mate ?",
+							"host": [
+								"{{TokenAPI}}"
+							],
+							"path": [
+								"search"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "U mad mate ?"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TC 8 - Tokens - Search by mint address",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"eval(pm.globals.get(\"basicTokenSearchValidation\"));\r",
+									"basicTokenSearchValidation(pm.response.json());"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{TokenAPI}}/search?query={{JPL}}",
+							"host": [
+								"{{TokenAPI}}"
+							],
+							"path": [
+								"search"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "{{JPL}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TC 9 - Tokens - Search by tag",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"eval(pm.globals.get(\"basicTokenSearchValidation\"));\r",
+									"basicTokenSearchValidation(pm.response.json());\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const queries = [\"lst\", \"verified\"];\r",
+									"\r",
+									"const randomQuery = queries[Math.floor(Math.random() * queries.length)];\r",
+									"\r",
+									"pm.variables.set(\"tagQuery\", randomQuery);\r",
+									"\r",
+									"console.log(\"Selected tag query:\", randomQuery);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{TokenAPI}}/tag?query={{tagQuery}}",
+							"host": [
+								"{{TokenAPI}}"
+							],
+							"path": [
+								"tag"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "{{tagQuery}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TC 10 - Tokens -  Search by category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"eval(pm.globals.get(\"basicTokenSearchValidation\"));\r",
+									"basicTokenSearchValidation(pm.response.json(), true);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Category options\r",
+									"const categoryOptions = [\"toporganicscore\", \"toptraded\", \"toptrending\"];\r",
+									"const randomCategory = categoryOptions[Math.floor(Math.random() * categoryOptions.length)];\r",
+									"pm.variables.set(\"categoryPath\", randomCategory);\r",
+									"\r",
+									"// Interval options\r",
+									"const intervalOptions = [\"5m\", \"1h\", \"6h\", \"24h\"];\r",
+									"const randomInterval = intervalOptions[Math.floor(Math.random() * intervalOptions.length)];\r",
+									"pm.variables.set(\"intervalQuery\", randomInterval);\r",
+									"\r",
+									"// Log for debugging\r",
+									"console.log(\"Selected category:\", randomCategory);\r",
+									"console.log(\"Selected interval:\", randomInterval);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{TokenAPI}}/:category/:interval?limit=5",
+							"host": [
+								"{{TokenAPI}}"
+							],
+							"path": [
+								":category",
+								":interval"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "5"
+								}
+							],
+							"variable": [
+								{
+									"key": "category",
+									"value": "{{categoryPath}}"
+								},
+								{
+									"key": "interval",
+									"value": "{{intervalQuery}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TC 11 - Price - Accurate token price retrieval",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"eval(pm.globals.get(\"basicPriceValidation\"));\r",
+									"basicPriceValidation(pm.response.json(), true);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{PriceAPI}}?ids={{wSOL}},{{USDC}}, {{BONK}}, {{TRUMP}}, {{USDT}}, {{JPL}}",
+							"host": [
+								"{{PriceAPI}}"
+							],
+							"query": [
+								{
+									"key": "ids",
+									"value": "{{wSOL}},{{USDC}}, {{BONK}}, {{TRUMP}}, {{USDT}}, {{JPL}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "inputValidation",
+			"item": [
+				{
+					"name": "quote",
+					"item": [
+						{
+							"name": "TC 12 - Quote - Invalid values in inputMint",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{SwapAPI}}/quote?inputMint={{invalidMint}}&outputMint={{USDC}}&amount=100000",
+									"host": [
+										"{{SwapAPI}}"
+									],
+									"path": [
+										"quote"
+									],
+									"query": [
+										{
+											"key": "inputMint",
+											"value": "{{invalidMint}}"
+										},
+										{
+											"key": "outputMint",
+											"value": "{{USDC}}"
+										},
+										{
+											"key": "amount",
+											"value": "100000"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "TC 13 - Quote - Invalid values in outputMint",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{SwapAPI}}/quote?inputMint={{USDC}}&outputMint={{invalidMint}}&amount=100000",
+									"host": [
+										"{{SwapAPI}}"
+									],
+									"path": [
+										"quote"
+									],
+									"query": [
+										{
+											"key": "inputMint",
+											"value": "{{USDC}}"
+										},
+										{
+											"key": "outputMint",
+											"value": "{{invalidMint}}"
+										},
+										{
+											"key": "amount",
+											"value": "100000"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "TC 14 - Quote - Invalid values in amount",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{SwapAPI}}/quote?inputMint={{wSOL}}&outputMint={{USDC}}&amount={{invalidAmount}}",
+									"host": [
+										"{{SwapAPI}}"
+									],
+									"path": [
+										"quote"
+									],
+									"query": [
+										{
+											"key": "inputMint",
+											"value": "{{wSOL}}"
+										},
+										{
+											"key": "outputMint",
+											"value": "{{USDC}}"
+										},
+										{
+											"key": "amount",
+											"value": "{{invalidAmount}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "TC 15 - Quote - Missing required fields",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let caseName = pm.iterationData.get(\"case\");\r",
+											"let actual = pm.response.code;\r",
+											"\r",
+											"pm.test(`${actual} – ${caseName}`, function () {\r",
+											"    pm.expect(actual).to.eql(pm.iterationData.get(\"expectedStatus\"));\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{SwapAPI}}/quote?inputMint={{inputMint}}&outputMint={{outputMint}}&amount={{amount}}",
+									"host": [
+										"{{SwapAPI}}"
+									],
+									"path": [
+										"quote"
+									],
+									"query": [
+										{
+											"key": "inputMint",
+											"value": "{{inputMint}}"
+										},
+										{
+											"key": "outputMint",
+											"value": "{{outputMint}}"
+										},
+										{
+											"key": "amount",
+											"value": "{{amount}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "swap-swapInstructions",
+					"item": [
+						{
+							"name": "TC 16 - Swap - Invalid values in userPublicKey",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const swapApiUrl = pm.variables.replaceIn(\"{{SwapAPI}}\");\r",
+											"\r",
+											"// Define query params for quote\r",
+											"const inputMint = pm.collectionVariables.get(\"wSOL\");\r",
+											"const outputMint = pm.collectionVariables.get(\"USDC\"); \r",
+											"const amount = 1000000; // 0.001 SOL with 9 decimals\r",
+											"const slippageBps = 50; // 0.5%\r",
+											"const onlyDirectRoutes = true;\r",
+											"\r",
+											"const url = `${swapApiUrl}/quote?inputMint=${inputMint}&outputMint=${outputMint}&amount=${amount}&slippageBps=${slippageBps}&onlyDirectRoutes=${onlyDirectRoutes}`;\r",
+											"\r",
+											"pm.sendRequest({\r",
+											"    url: url,\r",
+											"    method: \"GET\",\r",
+											"    header: {\r",
+											"        \"Accept\": \"application/json\"\r",
+											"    }\r",
+											"}, (err, res) => {\r",
+											"    if (err) {\r",
+											"        console.error(\"Quote request failed:\", err);\r",
+											"    } else {\r",
+											"        const json = res.json();\r",
+											"        console.log(\"Quote Response:\", json);\r",
+											"\r",
+											"        // Save entire quote response for later use\r",
+											"        pm.variables.set(\"lastQuote\", JSON.stringify(json));\r",
+											"\r",
+											"        // Check routePlan length to ensure there is exactly one route plan item.\r",
+											"        const routeLength = json.routePlan.length;\r",
+											"        pm.expect(routeLength).to.eql(1);\r",
+											"\r",
+											"    }\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 422\", function () {\r",
+											"    pm.response.to.have.status(422);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"userPublicKey\": \"{{invalidUserPublicKey}}\",\r\n  \"quoteResponse\": {{lastQuote}},\r\n  \"prioritizationFeeLamports\": {\r\n    \"priorityLevelWithMaxLamports\": {\r\n      \"maxLamports\": 10000000,\r\n      \"priorityLevel\": \"veryHigh\"\r\n    }\r\n  },\r\n  \"dynamicComputeUnitLimit\": true,\r\n  \"dynamicSlippage\": true\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{SwapAPI}}/swap",
+									"host": [
+										"{{SwapAPI}}"
+									],
+									"path": [
+										"swap"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "TC 17 - Swap - Missing required fields",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let caseName = pm.iterationData.get(\"case\");\r",
+											"let actual = pm.response.code;\r",
+											"\r",
+											"pm.test(`${actual} – ${caseName}`, function () {\r",
+											"    pm.expect(pm.response.code).to.eql(pm.iterationData.get(\"expectedStatus\"));\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const swapApiUrl = pm.variables.replaceIn(\"{{SwapAPI}}\");\r",
+											"\r",
+											"// Define query params for quote\r",
+											"const inputMint = pm.collectionVariables.get(\"wSOL\");\r",
+											"const outputMint = pm.collectionVariables.get(\"USDC\"); \r",
+											"const amount = 1000000; // 0.001 SOL with 9 decimals\r",
+											"const slippageBps = 50; // 0.5%\r",
+											"const onlyDirectRoutes = true;\r",
+											"\r",
+											"const url = `${swapApiUrl}/quote?inputMint=${inputMint}&outputMint=${outputMint}&amount=${amount}&slippageBps=${slippageBps}&onlyDirectRoutes=${onlyDirectRoutes}`;\r",
+											"\r",
+											"pm.sendRequest({\r",
+											"    url: url,\r",
+											"    method: \"GET\",\r",
+											"    header: {\r",
+											"        \"Accept\": \"application/json\"\r",
+											"    }\r",
+											"}, (err, res) => {\r",
+											"    if (err) {\r",
+											"        console.error(\"Quote request failed:\", err);\r",
+											"    } else {\r",
+											"        const json = res.json();\r",
+											"        console.log(\"Quote Response:\", json);\r",
+											"\r",
+											"        // Save entire quote response for later use\r",
+											"        pm.variables.set(\"lastQuote\", JSON.stringify(json));\r",
+											"\r",
+											"        // Check routePlan length to ensure there is exactly one route plan item.\r",
+											"        const routeLength = json.routePlan.length;\r",
+											"        pm.expect(routeLength).to.eql(1);\r",
+											"\r",
+											"    }\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"userPublicKey\": \"{{userPublicKey}}\",\r\n  \"quoteResponse\": {{quoteResponse}},\r\n  \"prioritizationFeeLamports\": {\r\n    \"priorityLevelWithMaxLamports\": {\r\n      \"maxLamports\": 10000000,\r\n      \"priorityLevel\": \"veryHigh\"\r\n    }\r\n  },\r\n  \"dynamicComputeUnitLimit\": true,\r\n  \"dynamicSlippage\": true\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{SwapAPI}}/swap",
+									"host": [
+										"{{SwapAPI}}"
+									],
+									"path": [
+										"swap"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "TC 18 - Swap Instructions - Invalid values in userPublicKey",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 422\", function () {\r",
+											"    pm.response.to.have.status(422);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const swapApiUrl = pm.variables.replaceIn(\"{{SwapAPI}}\");\r",
+											"\r",
+											"// Define query params for quote\r",
+											"const inputMint = pm.collectionVariables.get(\"wSOL\");\r",
+											"const outputMint = pm.collectionVariables.get(\"USDC\"); \r",
+											"const amount = 1000000; // 0.001 SOL with 9 decimals\r",
+											"const slippageBps = 50; // 0.5%\r",
+											"const onlyDirectRoutes = true;\r",
+											"\r",
+											"const url = `${swapApiUrl}/quote?inputMint=${inputMint}&outputMint=${outputMint}&amount=${amount}&slippageBps=${slippageBps}&onlyDirectRoutes=${onlyDirectRoutes}`;\r",
+											"\r",
+											"pm.sendRequest({\r",
+											"    url: url,\r",
+											"    method: \"GET\",\r",
+											"    header: {\r",
+											"        \"Accept\": \"application/json\"\r",
+											"    }\r",
+											"}, (err, res) => {\r",
+											"    if (err) {\r",
+											"        console.error(\"Quote request failed:\", err);\r",
+											"    } else {\r",
+											"        const json = res.json();\r",
+											"        console.log(\"Quote Response:\", json);\r",
+											"\r",
+											"        // Save entire quote response for later use\r",
+											"        pm.variables.set(\"lastQuote\", JSON.stringify(json));\r",
+											"\r",
+											"        // Check routePlan length to ensure there is exactly one route plan item.\r",
+											"        const routeLength = json.routePlan.length;\r",
+											"        pm.expect(routeLength).to.eql(1);\r",
+											"\r",
+											"    }\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"userPublicKey\": \"{{invalidUserPublicKey}}\",\r\n  \"quoteResponse\": {{lastQuote}},\r\n  \"prioritizationFeeLamports\": {\r\n    \"priorityLevelWithMaxLamports\": {\r\n      \"maxLamports\": 10000000,\r\n      \"priorityLevel\": \"veryHigh\"\r\n    }\r\n  },\r\n  \"dynamicComputeUnitLimit\": true,\r\n  \"dynamicSlippage\": true\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{SwapAPI}}/swap-instructions",
+									"host": [
+										"{{SwapAPI}}"
+									],
+									"path": [
+										"swap-instructions"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "TC 19 - Swap Instructions - Missing required fields",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const swapApiUrl = pm.variables.replaceIn(\"{{SwapAPI}}\");\r",
+											"\r",
+											"// Define query params for quote\r",
+											"const inputMint = pm.collectionVariables.get(\"wSOL\");\r",
+											"const outputMint = pm.collectionVariables.get(\"USDC\"); \r",
+											"const amount = 1000000; // 0.001 SOL with 9 decimals\r",
+											"const slippageBps = 50; // 0.5%\r",
+											"const onlyDirectRoutes = true;\r",
+											"\r",
+											"const url = `${swapApiUrl}/quote?inputMint=${inputMint}&outputMint=${outputMint}&amount=${amount}&slippageBps=${slippageBps}&onlyDirectRoutes=${onlyDirectRoutes}`;\r",
+											"\r",
+											"pm.sendRequest({\r",
+											"    url: url,\r",
+											"    method: \"GET\",\r",
+											"    header: {\r",
+											"        \"Accept\": \"application/json\"\r",
+											"    }\r",
+											"}, (err, res) => {\r",
+											"    if (err) {\r",
+											"        console.error(\"Quote request failed:\", err);\r",
+											"    } else {\r",
+											"        const json = res.json();\r",
+											"        console.log(\"Quote Response:\", json);\r",
+											"\r",
+											"        // Save entire quote response for later use\r",
+											"        pm.variables.set(\"lastQuote\", JSON.stringify(json));\r",
+											"\r",
+											"        // Check routePlan length to ensure there is exactly one route plan item.\r",
+											"        const routeLength = json.routePlan.length;\r",
+											"        pm.expect(routeLength).to.eql(1);\r",
+											"\r",
+											"    }\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let caseName = pm.iterationData.get(\"case\");\r",
+											"let actual = pm.response.code;\r",
+											"\r",
+											"pm.test(`${actual} – ${caseName}`, function () {\r",
+											"    pm.expect(pm.response.code).to.eql(pm.iterationData.get(\"expectedStatus\"));\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"userPublicKey\": \"{{userPublicKey}}\",\r\n  \"quoteResponse\": {{quoteResponse}},\r\n  \"prioritizationFeeLamports\": {\r\n    \"priorityLevelWithMaxLamports\": {\r\n      \"maxLamports\": 10000000,\r\n      \"priorityLevel\": \"veryHigh\"\r\n    }\r\n  },\r\n  \"dynamicComputeUnitLimit\": true,\r\n  \"dynamicSlippage\": true\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{SwapAPI}}/swap-instructions",
+									"host": [
+										"{{SwapAPI}}"
+									],
+									"path": [
+										"swap-instructions"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "tokensTag",
+					"item": [
+						{
+							"name": "TC 21 - Tokens - Tag with missing/invalid required parameters",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let caseName = pm.iterationData.get(\"case\");\r",
+											"let actual = pm.response.code;\r",
+											"\r",
+											"pm.test(`${actual} – ${caseName}`, function () {\r",
+											"    pm.expect(actual).to.eql(pm.iterationData.get(\"expectedStatus\"));\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"let query = pm.iterationData.get(\"query\");\r",
+											"\r",
+											"if (query === \"{{omit}}\") {\r",
+											"    // Remove the query param entirely\r",
+											"    let url = pm.request.url.toString().split(\"?\")[0]; \r",
+											"    pm.request.url = url;\r",
+											"}\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{TokenAPI}}/tag?query={{query}}",
+									"host": [
+										"{{TokenAPI}}"
+									],
+									"path": [
+										"tag"
+									],
+									"query": [
+										{
+											"key": "query",
+											"value": "{{query}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "tokensCategory",
+					"item": [
+						{
+							"name": "TC 22 - Tokens - Category with missing/invalid required path parameters",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"let category = pm.iterationData.get(\"category\");\r",
+											"let interval = pm.iterationData.get(\"interval\");\r",
+											"\r",
+											"let baseUrl = pm.collectionVariables.get(\"TokenAPI\")\r",
+											"\r",
+											"// Handle \"omit\" cases\r",
+											"if (category === \"{{omit}}\") {\r",
+											"    // Category missing → don’t include it\r",
+											"    pm.request.url = `${baseUrl}/${interval}`;\r",
+											"} else if (interval === \"{{omit}}\") {\r",
+											"    // Interval missing → don’t include it\r",
+											"    pm.request.url = `${baseUrl}/${category}`;\r",
+											"} else {\r",
+											"    // Both present\r",
+											"    pm.request.url = `${baseUrl}/${category}/${interval}`;\r",
+											"}\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let caseName = pm.iterationData.get(\"case\");\r",
+											"let actual = pm.response.code;\r",
+											"let expectEmpty = pm.iterationData.get(\"expectEmptyArray\") === true;\r",
+											"\r",
+											"pm.test(`${actual} – ${caseName}`, function () {\r",
+											"    pm.expect(actual).to.eql(pm.iterationData.get(\"expectedStatus\"));\r",
+											"});\r",
+											"\r",
+											"// Additional check for empty array if status is 200 and expectEmptyArray is true\r",
+											"if (actual === 200 && expectEmpty) {\r",
+											"    pm.test(`Response is an empty array for ${caseName}`, function () {\r",
+											"        let jsonData = pm.response.json();\r",
+											"        pm.expect(jsonData).to.be.an('array').that.is.empty;\r",
+											"    });\r",
+											"}\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{TokenAPI}}/:category/:interval",
+									"host": [
+										"{{TokenAPI}}"
+									],
+									"path": [
+										":category",
+										":interval"
+									],
+									"query": [
+										{
+											"key": "limit",
+											"value": "5",
+											"disabled": true
+										}
+									],
+									"variable": [
+										{
+											"key": "category",
+											"value": ""
+										},
+										{
+											"key": "interval",
+											"value": "1h"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "TC 23 - Tokens - Category invalid values in limit",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(`${pm.response.code} – ${pm.iterationData.get(\"case\")}`, function () {\r",
+											"    pm.expect(pm.response.code).to.eql(pm.iterationData.get(\"expectedStatus\"));\r",
+											"});\r",
+											"\r",
+											"// Wrap all logic in a block to avoid redeclaring\r",
+											"(() => {\r",
+											"    let responseData;\r",
+											"    try {\r",
+											"        responseData = pm.response.json();\r",
+											"    } catch (e) {\r",
+											"        responseData = null;\r",
+											"    }\r",
+											"\r",
+											"    const limit = pm.iterationData.get(\"limit\");\r",
+											"\r",
+											"    if (pm.response.code === 200 && responseData) {\r",
+											"        if (typeof limit === \"number\" && limit > 100) {\r",
+											"            pm.test(\"Array length capped at 100\", () => {\r",
+											"                pm.expect(responseData.length).to.be.above(0);\r",
+											"                pm.expect(responseData.length).to.be.at.most(100);\r",
+											"            });\r",
+											"        } else if (!Number.isInteger(limit)) {\r",
+											"            pm.test(\"Decimal limit returns empty array\", () => {\r",
+											"                pm.expect(responseData.length).to.eql(0);\r",
+											"            });\r",
+											"        }\r",
+											"    }\r",
+											"})();\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{TokenAPI}}/:category/:interval?limit={{limit}}",
+									"host": [
+										"{{TokenAPI}}"
+									],
+									"path": [
+										":category",
+										":interval"
+									],
+									"query": [
+										{
+											"key": "limit",
+											"value": "{{limit}}"
+										}
+									],
+									"variable": [
+										{
+											"key": "category",
+											"value": "toptraded"
+										},
+										{
+											"key": "interval",
+											"value": "1h"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "tokensSearch",
+					"item": [
+						{
+							"name": "TC 20 - Tokens - Search with missing required parameters",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{TokenAPI}}/search",
+									"host": [
+										"{{TokenAPI}}"
+									],
+									"path": [
+										"search"
+									],
+									"query": [
+										{
+											"key": "query",
+											"value": "",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "price",
+					"item": [
+						{
+							"name": "TC 24 - Price - Missing/invalid required query parameter",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"// Get the current test case\r",
+											"const ids = pm.iterationData.get(\"ids\");\r",
+											"\r",
+											"// Build the request URL dynamically\r",
+											"let url = pm.request.url.toString();\r",
+											"\r",
+											"// Remove the existing ids query if present\r",
+											"url = url.replace(/([&?])ids=[^&]*/i, \"\");\r",
+											"\r",
+											"// Add ids query if it's not the special omit token\r",
+											"if (ids && ids !== \"{{omit}}\") {\r",
+											"    const separator = url.includes(\"?\") ? \"&\" : \"?\";\r",
+											"    url += `${separator}ids=${encodeURIComponent(ids)}`;\r",
+											"}\r",
+											"\r",
+											"// Update the request URL\r",
+											"pm.request.url = url;\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const caseName = pm.iterationData.get(\"case\");\r",
+											"const expectedStatus = parseInt(pm.iterationData.get(\"expectedStatus\"), 10);\r",
+											"const actualStatus = pm.response.code;\r",
+											"\r",
+											"pm.test(`Status ${actualStatus} – ${caseName}`, function () {\r",
+											"    pm.expect(actualStatus).to.eql(expectedStatus);\r",
+											"});\r",
+											"\r",
+											"// Optional: if the API returns 200 but we expect an empty object\r",
+											"if (actualStatus === 200) {\r",
+											"    pm.test(\"Response should be an empty object\", () => {\r",
+											"        const data = pm.response.json();\r",
+											"        pm.expect(Object.keys(data).length).to.eql(0);\r",
+											"    });\r",
+											"}\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{PriceAPI}}",
+									"host": [
+										"{{PriceAPI}}"
+									],
+									"query": [
+										{
+											"key": "ids",
+											"value": "{{wSOL}},{{USDC}}, {{BONK}}, {{TRUMP}}, {{USDT}}, {{JPL}}",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "bussinessLogic",
+			"item": [
+				{
+					"name": "TC 25 - Insufficient liquidity",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"eval(pm.globals.get(\"basicQuoteValidation\"));\r",
+									"basicQuoteValidation(pm.response.json());\r",
+									"\r",
+									"pm.test(\"priceImpactPct is higher than 0.90\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    const priceImpact = parseFloat(jsonData.priceImpactPct);\r",
+									"\r",
+									"    pm.expect(priceImpact).to.be.above(0.90);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{SwapAPI}}/quote?inputMint={{wSOL}}&outputMint={{USDC}}&amount=100000000000000000&slippageBps=0&restrictIntermediateTokens=true",
+							"host": [
+								"{{SwapAPI}}"
+							],
+							"path": [
+								"quote"
+							],
+							"query": [
+								{
+									"key": "inputMint",
+									"value": "{{wSOL}}"
+								},
+								{
+									"key": "outputMint",
+									"value": "{{USDC}}"
+								},
+								{
+									"key": "amount",
+									"value": "100000000000000000"
+								},
+								{
+									"key": "slippageBps",
+									"value": "0"
+								},
+								{
+									"key": "restrictIntermediateTokens",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TC 26 - Duplicate swap",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const swapApiUrl = pm.variables.replaceIn(\"{{SwapAPI}}\");\r",
+									"\r",
+									"// Define query params for quote\r",
+									"const inputMint = pm.collectionVariables.get(\"wSOL\");\r",
+									"const outputMint = pm.collectionVariables.get(\"USDC\"); \r",
+									"const amount = 1000000; // 0.001 SOL with 9 decimals\r",
+									"const slippageBps = 50; // 0.5%\r",
+									"const onlyDirectRoutes = true;\r",
+									"\r",
+									"const quoteUrl = `${swapApiUrl}/quote?inputMint=${inputMint}&outputMint=${outputMint}&amount=${amount}&slippageBps=${slippageBps}&onlyDirectRoutes=${onlyDirectRoutes}`;\r",
+									"\r",
+									"pm.sendRequest({\r",
+									"    url: quoteUrl,\r",
+									"    method: \"GET\",\r",
+									"    header: {\r",
+									"        \"Accept\": \"application/json\"\r",
+									"    }\r",
+									"}, (err, res) => {\r",
+									"    if (err) {\r",
+									"        console.error(\"Quote request failed:\", err);\r",
+									"        return;\r",
+									"    }\r",
+									"\r",
+									"    const quoteJson = res.json();\r",
+									"    console.log(\"Quote Response:\", quoteJson);\r",
+									"\r",
+									"    // Save entire quote response for later use\r",
+									"    pm.variables.set(\"lastQuote\", JSON.stringify(quoteJson));\r",
+									"\r",
+									"    // Prepare first swap request body **inside the callback**\r",
+									"    const swapBody = {\r",
+									"        userPublicKey: pm.collectionVariables.get(\"userPublicKey\") || \"\", // placeholder wallet\r",
+									"        quoteResponse: quoteJson,\r",
+									"        prioritizationFeeLamports: {\r",
+									"            priorityLevelWithMaxLamports: {\r",
+									"                maxLamports: 10000000,\r",
+									"                priorityLevel: \"veryHigh\"\r",
+									"            }\r",
+									"        },\r",
+									"        dynamicComputeUnitLimit: true,\r",
+									"        dynamicSlippage: true\r",
+									"    };\r",
+									"\r",
+									"    // Execute first swap request\r",
+									"    pm.sendRequest({\r",
+									"        url: `${swapApiUrl}/swap`,\r",
+									"        method: \"POST\",\r",
+									"        header: {\r",
+									"            \"Content-Type\": \"application/json\"\r",
+									"        },\r",
+									"        body: {\r",
+									"            mode: \"raw\",\r",
+									"            raw: JSON.stringify(swapBody)\r",
+									"        }\r",
+									"    }, (err2, res2) => {\r",
+									"        if (err2) {\r",
+									"            console.error(\"First swap request failed:\", err2);\r",
+									"        } else {\r",
+									"            const swapJson = res2.json();\r",
+									"            console.log(\"First Swap Response:\", swapJson);\r",
+									"\r",
+									"            // Save it if you want to assert something later\r",
+									"            pm.variables.set(\"firstSwapResponse\", JSON.stringify(swapJson));\r",
+									"        }\r",
+									"    });\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"eval(pm.globals.get(\"basicSwapValidation\"));\r",
+									"basicSwapValidation(pm.response.json());\r",
+									"\r",
+									"// Parse stored first swap response\r",
+									"const firstSwapResponse = JSON.parse(pm.variables.get(\"firstSwapResponse\") || \"{}\");\r",
+									"const currentSwapResponse = pm.response.json();"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userPublicKey\": \"{{userPublicKey}}\",\r\n  \"quoteResponse\": {{lastQuote}},\r\n  \"prioritizationFeeLamports\": {\r\n    \"priorityLevelWithMaxLamports\": {\r\n      \"maxLamports\": 10000000,\r\n      \"priorityLevel\": \"veryHigh\"\r\n    }\r\n  },\r\n  \"dynamicComputeUnitLimit\": true,\r\n  \"dynamicSlippage\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{SwapAPI}}/swap",
+							"host": [
+								"{{SwapAPI}}"
+							],
+							"path": [
+								"swap"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TC 27 - Precision handling for token amounts",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const swapApiUrl = pm.variables.replaceIn(\"{{SwapAPI}}\");\r",
+									"\r",
+									"// Get iteration data (cases)\r",
+									"let inputMint = pm.iterationData.get(\"inputMint\");    // might be \"{{BONK}}\" etc.\r",
+									"let outputMint = pm.iterationData.get(\"outputMint\");\r",
+									"\r",
+									"// Resolve any placeholders using collection variables\r",
+									"inputMint = pm.variables.replaceIn(inputMint);\r",
+									"outputMint = pm.variables.replaceIn(outputMint);\r",
+									"\r",
+									"// Get amounts and decimals from iteration data\r",
+									"const amount = Number(pm.iterationData.get(\"amount\"));\r",
+									"const decimalsInput = Number(pm.iterationData.get(\"decimalsInput\"));\r",
+									"const decimalsOutput = Number(pm.iterationData.get(\"decimalsOutput\"));\r",
+									"\r",
+									"const slippageBps = 50;  // example\r",
+									"const onlyDirectRoutes = true;\r",
+									"\r",
+									"// Convert amount to base units for URL\r",
+									"const amountInBaseUnits = amount * Math.pow(10, decimalsInput);\r",
+									"\r",
+									"// Build final URL\r",
+									"const url = `${swapApiUrl}/quote?inputMint=${inputMint}&outputMint=${outputMint}&amount=${amountInBaseUnits}&slippageBps=${slippageBps}&onlyDirectRoutes=${onlyDirectRoutes}`;\r",
+									"\r",
+									"// Save URL and decimals for main request/tests\r",
+									"pm.variables.set(\"quoteUrl\", url);\r",
+									"pm.variables.set(\"decimalsInput\", decimalsInput);\r",
+									"pm.variables.set(\"decimalsOutput\", decimalsOutput);\r",
+									"\r",
+									"// Optional: log for debugging\r",
+									"console.log(\"Prepared quote URL:\", url);\r",
+									"console.log(\"Decimals - input:\", decimalsInput, \"output:\", decimalsOutput);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Parse quote response\r",
+									"const jsonData = pm.response.json();  \r",
+									"const decimalsInput = Number(pm.variables.get(\"decimalsInput\"));\r",
+									"const decimalsOutput = Number(pm.variables.get(\"decimalsOutput\"));\r",
+									"\r",
+									"// Status code check\r",
+									"pm.test(\"Status code is 200\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Convert amounts to human-readable\r",
+									"const humanInAmount = Number(jsonData.inAmount) / Math.pow(10, decimalsInput);\r",
+									"const humanOutAmount = Number(jsonData.outAmount) / Math.pow(10, decimalsOutput);\r",
+									"\r",
+									"// Precision check: convert back to base units and assert exact match\r",
+									"pm.test(\"Input amount precision is correct\", () => {\r",
+									"    const expectedInBaseUnits = Math.round(humanInAmount * Math.pow(10, decimalsInput));\r",
+									"    pm.expect(expectedInBaseUnits).to.eql(Number(jsonData.inAmount));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Output amount precision is correct\", () => {\r",
+									"    const expectedOutBaseUnits = Math.round(humanOutAmount * Math.pow(10, decimalsOutput));\r",
+									"    pm.expect(expectedOutBaseUnits).to.eql(Number(jsonData.outAmount));\r",
+									"});\r",
+									"\r",
+									"// Minimal unit edge case: ensure human-readable amount is >= smallest fraction\r",
+									"pm.test(\"Input amount respects minimal unit\", () => {\r",
+									"    const minimalUnit = 1 / Math.pow(10, decimalsInput);\r",
+									"    pm.expect(humanInAmount).to.be.at.least(minimalUnit);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Output amount respects minimal unit\", () => {\r",
+									"    const minimalUnit = 1 / Math.pow(10, decimalsOutput);\r",
+									"    pm.expect(humanOutAmount).to.be.at.least(minimalUnit);\r",
+									"});\r",
+									"\r",
+									"console.log(`Human-readable amounts: ${humanInAmount} -> ${humanOutAmount}`);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{quoteUrl}}",
+							"host": [
+								"{{quoteUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TC 28 - Swap of unsupported pairs",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"// Parse response\r",
+									"const jsonData = pm.response.json();\r",
+									"\r",
+									"// Test specific error code\r",
+									"pm.test(\"Error code is TOKEN_NOT_TRADABLE\", () => {\r",
+									"    pm.expect(jsonData.errorCode).to.eql(\"TOKEN_NOT_TRADABLE\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{SwapAPI}}/quote?inputMint={{wSOL}}&outputMint={{invalidMint}}&amount=100000",
+							"host": [
+								"{{SwapAPI}}"
+							],
+							"path": [
+								"quote"
+							],
+							"query": [
+								{
+									"key": "inputMint",
+									"value": "{{wSOL}}"
+								},
+								{
+									"key": "outputMint",
+									"value": "{{invalidMint}}"
+								},
+								{
+									"key": "amount",
+									"value": "100000"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "security",
+			"item": [
+				{
+					"name": "TC 30 - Input sanitisation",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response is an empty array for injection attempt\", () => {\r",
+									"    pm.expect(jsonData).to.be.an(\"array\").that.is.empty;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{TokenAPI}}/search?query={{maliciousInput}}",
+							"host": [
+								"{{TokenAPI}}"
+							],
+							"path": [
+								"search"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "{{maliciousInput}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"pm.globals.set(\"basicQuoteValidation\", `\r",
+					"function basicQuoteValidation(jsonData) {\r",
+					"    // Status code\r",
+					"    pm.test(\"Status code is 200\", () => {\r",
+					"        pm.response.to.have.status(200);\r",
+					"    });\r",
+					"\r",
+					"    // Required fields\r",
+					"    pm.test(\"inputMint is present and a string\", () => {\r",
+					"        pm.expect(jsonData).to.have.property('inputMint');\r",
+					"        pm.expect(jsonData.inputMint).to.be.a('string');\r",
+					"        pm.expect(jsonData.inputMint.length).to.be.above(0);\r",
+					"    });\r",
+					"\r",
+					"    pm.test(\"inAmount is present and a string\", () => {\r",
+					"        pm.expect(jsonData).to.have.property('inAmount');\r",
+					"        pm.expect(jsonData.inAmount).to.be.a('string');\r",
+					"    });\r",
+					"\r",
+					"    pm.test(\"outputMint is present and a string\", () => {\r",
+					"        pm.expect(jsonData).to.have.property('outputMint');\r",
+					"        pm.expect(jsonData.outputMint).to.be.a('string');\r",
+					"        pm.expect(jsonData.outputMint.length).to.be.above(0);\r",
+					"    });\r",
+					"\r",
+					"    pm.test(\"outAmount is present and a string\", () => {\r",
+					"        pm.expect(jsonData).to.have.property('outAmount');\r",
+					"        pm.expect(jsonData.outAmount).to.be.a('string');\r",
+					"    });\r",
+					"\r",
+					"    pm.test(\"otherAmountThreshold is present and a string\", () => {\r",
+					"        pm.expect(jsonData).to.have.property('otherAmountThreshold');\r",
+					"        pm.expect(jsonData.otherAmountThreshold).to.be.a('string');\r",
+					"    });\r",
+					"\r",
+					"    pm.test(\"swapMode is present and either ExactIn or ExactOut\", () => {\r",
+					"        pm.expect(jsonData).to.have.property('swapMode');\r",
+					"        pm.expect([\"ExactIn\",\"ExactOut\"]).to.include(jsonData.swapMode);\r",
+					"    });\r",
+					"\r",
+					"    pm.test(\"slippageBps is present and numeric >= 0\", () => {\r",
+					"        pm.expect(jsonData).to.have.property('slippageBps');\r",
+					"        pm.expect(Number(jsonData.slippageBps)).to.be.at.least(0);\r",
+					"    });\r",
+					"\r",
+					"    // priceImpactPct\r",
+					"    pm.test(\"priceImpactPct is present and a string\", () => {\r",
+					"        pm.expect(jsonData).to.have.property('priceImpactPct');\r",
+					"        pm.expect(jsonData.priceImpactPct).to.be.a('string');\r",
+					"    });\r",
+					"\r",
+					"    // routePlan\r",
+					"    pm.test(\"routePlan is present and an array with valid swapInfo\", () => {\r",
+					"        pm.expect(jsonData).to.have.property('routePlan');\r",
+					"        pm.expect(jsonData.routePlan).to.be.an('array');\r",
+					"        jsonData.routePlan.forEach(plan => {\r",
+					"            const swapInfo = plan.swapInfo;\r",
+					"            pm.expect(swapInfo).to.have.property('ammKey').that.is.a('string');\r",
+					"            pm.expect(swapInfo).to.have.property('label').that.is.a('string');\r",
+					"            pm.expect(swapInfo).to.have.property('inputMint').that.is.a('string');\r",
+					"            pm.expect(swapInfo).to.have.property('outputMint').that.is.a('string');\r",
+					"            pm.expect(swapInfo).to.have.property('inAmount').that.is.a('string');\r",
+					"            pm.expect(swapInfo).to.have.property('outAmount').that.is.a('string');\r",
+					"            pm.expect(swapInfo).to.have.property('feeAmount').that.is.a('string');\r",
+					"            pm.expect(swapInfo).to.have.property('feeMint').that.is.a('string');\r",
+					"            pm.expect(plan).to.have.property('percent');\r",
+					"            pm.expect(plan).to.have.property('bps');\r",
+					"        });\r",
+					"    });\r",
+					"}\r",
+					"`);\r",
+					"\r",
+					"\r",
+					"pm.globals.set(\"basicSwapValidation\", `\r",
+					"function basicSwapValidation(jsonData) {\r",
+					"        // Status code\r",
+					"    pm.test(\"Status code is 200\", () => {\r",
+					"        pm.response.to.have.status(200);\r",
+					"    });\r",
+					"\r",
+					"    // swapTransaction\r",
+					"    pm.test(\"swapTransaction is present and a string\", () => {\r",
+					"        pm.expect(jsonData).to.have.property('swapTransaction');\r",
+					"        pm.expect(jsonData.swapTransaction).to.be.a('string');\r",
+					"        pm.expect(jsonData.swapTransaction.length).to.be.above(0);\r",
+					"    });\r",
+					"\r",
+					"    // lastValidBlockHeight\r",
+					"    pm.test(\"lastValidBlockHeight is present and numeric\", () => {\r",
+					"        pm.expect(jsonData).to.have.property('lastValidBlockHeight');\r",
+					"        pm.expect(Number(jsonData.lastValidBlockHeight)).to.be.a('number');\r",
+					"    });\r",
+					"}\r",
+					"`);\r",
+					"\r",
+					"pm.globals.set(\"basicSwapInstructionsValidation\", `\r",
+					"function basicSwapInstructionsValidation(jsonData) {\r",
+					"    // Status code\r",
+					"    pm.test(\"Status code is 200\", () => {\r",
+					"        pm.response.to.have.status(200);\r",
+					"    });\r",
+					"\r",
+					"    // computeBudgetInstructions\r",
+					"    pm.test(\"computeBudgetInstructions is present and an array with valid objects\", () => {\r",
+					"        pm.expect(jsonData).to.have.property('computeBudgetInstructions');\r",
+					"        pm.expect(jsonData.computeBudgetInstructions).to.be.an('array');\r",
+					"        jsonData.computeBudgetInstructions.forEach(instr => {\r",
+					"            pm.expect(instr).to.have.property('programId').that.is.a('string');\r",
+					"            pm.expect(instr).to.have.property('accounts').that.is.an('array');\r",
+					"            instr.accounts.forEach(account => {\r",
+					"                pm.expect(account).to.have.property('pubkey').that.is.a('string');\r",
+					"                pm.expect(account).to.have.property('isSigner').that.is.a('boolean');\r",
+					"                pm.expect(account).to.have.property('isWritable').that.is.a('boolean');\r",
+					"            });\r",
+					"            pm.expect(instr).to.have.property('data').that.is.a('string');\r",
+					"        });\r",
+					"    });\r",
+					"\r",
+					"    // setupInstructions\r",
+					"    pm.test(\"setupInstructions is present and an array with valid objects\", () => {\r",
+					"        pm.expect(jsonData).to.have.property('setupInstructions');\r",
+					"        pm.expect(jsonData.setupInstructions).to.be.an('array');\r",
+					"        jsonData.setupInstructions.forEach(instr => {\r",
+					"            pm.expect(instr).to.have.property('programId').that.is.a('string');\r",
+					"            pm.expect(instr).to.have.property('accounts').that.is.an('array');\r",
+					"            instr.accounts.forEach(account => {\r",
+					"                pm.expect(account).to.have.property('pubkey').that.is.a('string');\r",
+					"                pm.expect(account).to.have.property('isSigner').that.is.a('boolean');\r",
+					"                pm.expect(account).to.have.property('isWritable').that.is.a('boolean');\r",
+					"            });\r",
+					"            pm.expect(instr).to.have.property('data').that.is.a('string');\r",
+					"        });\r",
+					"    });\r",
+					"\r",
+					"    // swapInstruction\r",
+					"    pm.test(\"swapInstruction is present and structured correctly\", () => {\r",
+					"        pm.expect(jsonData).to.have.property('swapInstruction');\r",
+					"        const instr = jsonData.swapInstruction;\r",
+					"        pm.expect(instr).to.have.property('programId').that.is.a('string');\r",
+					"        pm.expect(instr).to.have.property('accounts').that.is.an('array');\r",
+					"        instr.accounts.forEach(account => {\r",
+					"            pm.expect(account).to.have.property('pubkey').that.is.a('string');\r",
+					"            pm.expect(account).to.have.property('isSigner').that.is.a('boolean');\r",
+					"            pm.expect(account).to.have.property('isWritable').that.is.a('boolean');\r",
+					"        });\r",
+					"        pm.expect(instr).to.have.property('data').that.is.a('string');\r",
+					"    });\r",
+					"\r",
+					"    // addressLookupTableAddresses\r",
+					"    pm.test(\"addressLookupTableAddresses is present and an array of strings\", () => {\r",
+					"        pm.expect(jsonData).to.have.property('addressLookupTableAddresses');\r",
+					"        pm.expect(jsonData.addressLookupTableAddresses).to.be.an('array');\r",
+					"        jsonData.addressLookupTableAddresses.forEach(addr => {\r",
+					"            pm.expect(addr).to.be.a('string');\r",
+					"        });\r",
+					"    });\r",
+					"}\r",
+					"`);\r",
+					"\r",
+					"pm.globals.set(\"basicTokenSearchValidation\", `\r",
+					"function basicTokenSearchValidation(jsonData, validateAll = false) {\r",
+					"    // Status code\r",
+					"    pm.test(\"Status code is 200\", () => {\r",
+					"        pm.response.to.have.status(200);\r",
+					"    });\r",
+					"\r",
+					"    // Response is an array\r",
+					"    pm.test(\"Response is an array of tokens\", () => {\r",
+					"        pm.expect(jsonData).to.be.an('array');\r",
+					"        pm.expect(jsonData.length).to.be.above(0);\r",
+					"    });\r",
+					"\r",
+					"    // Decide which tokens to validate\r",
+					"    const tokensToValidate = validateAll ? jsonData : [jsonData[0]];\r",
+					"\r",
+					"    tokensToValidate.forEach((token) => {\r",
+					"        pm.test(\\`Token \\${token.symbol} structure\\`, () => {\r",
+					"            // Required fields with type assertions\r",
+					"            pm.expect(token).to.have.property('id');\r",
+					"            pm.expect(token.id).to.be.a('string');\r",
+					"\r",
+					"            pm.expect(token).to.have.property('name');\r",
+					"            pm.expect(token.name).to.be.a('string');\r",
+					"\r",
+					"            pm.expect(token).to.have.property('symbol');\r",
+					"            pm.expect(token.symbol).to.be.a('string');\r",
+					"\r",
+					"            pm.expect(token).to.have.property('decimals');\r",
+					"            pm.expect(token.decimals).to.be.a('number');\r",
+					"\r",
+					"            pm.expect(token).to.have.property('tokenProgram');\r",
+					"            pm.expect(token.tokenProgram).to.be.a('string');\r",
+					"\r",
+					"            pm.expect(token).to.have.property('updatedAt');\r",
+					"            pm.expect(!isNaN(Date.parse(token.updatedAt))).to.be.true;\r",
+					"\r",
+					"            pm.expect(token).to.have.property('organicScore');\r",
+					"            pm.expect(token.organicScore).to.be.a('number');\r",
+					"\r",
+					"            pm.expect(token).to.have.property('organicScoreLabel');\r",
+					"            pm.expect(['high', 'medium', 'low']).to.include(token.organicScoreLabel);\r",
+					"\r",
+					"            // Optional / nullable fields (shallow type check if present)\r",
+					"            const optionalFields = {\r",
+					"                'icon': 'string',\r",
+					"                'twitter': 'string',\r",
+					"                'telegram': 'string',\r",
+					"                'website': 'string',\r",
+					"                'dev': 'string',\r",
+					"                'circSupply': 'number',\r",
+					"                'totalSupply': 'number',\r",
+					"                'launchpad': 'string',\r",
+					"                'partnerConfig': 'string',\r",
+					"                'graduatedPool': 'string',\r",
+					"                'graduatedAt': 'string',\r",
+					"                'holderCount': 'number',\r",
+					"                'fdv': 'number',\r",
+					"                'mcap': 'number',\r",
+					"                'usdPrice': 'number',\r",
+					"                'priceBlockId': 'number',\r",
+					"                'liquidity': 'number',\r",
+					"                'isVerified': 'boolean'\r",
+					"            };\r",
+					"\r",
+					"            Object.keys(optionalFields).forEach((field) => {\r",
+					"                if (token[field] !== undefined && token[field] !== null) {\r",
+					"                    pm.expect(typeof token[field]).to.eql(optionalFields[field]);\r",
+					"                }\r",
+					"            });\r",
+					"\r",
+					"            // Arrays\r",
+					"            if (token.cexes !== undefined && token.cexes !== null) pm.expect(token.cexes).to.be.an('array');\r",
+					"            if (token.tags !== undefined && token.tags !== null) pm.expect(token.tags).to.be.an('array');\r",
+					"\r",
+					"            // Optional objects (shallow check)\r",
+					"            const optionalObjects = ['stats5m','stats1h','stats6h','stats24h','firstPool','audit'];\r",
+					"            optionalObjects.forEach((field) => {\r",
+					"                if (token[field] !== undefined && token[field] !== null) {\r",
+					"                    pm.expect(token[field]).to.be.an('object');\r",
+					"                }\r",
+					"            });\r",
+					"        });\r",
+					"    });\r",
+					"}\r",
+					"`);\r",
+					"\r",
+					"\r",
+					"\r",
+					"pm.globals.set(\"basicPriceValidation\", `\r",
+					"function basicPriceValidation(jsonData, validateAll = false) {\r",
+					"    // Status code\r",
+					"    pm.test(\"Status code is 200\", () => {\r",
+					"        pm.response.to.have.status(200);\r",
+					"    });\r",
+					"\r",
+					"    const tokenKeys = Object.keys(jsonData);\r",
+					"    pm.test(\"Response has token entries\", () => {\r",
+					"        pm.expect(tokenKeys.length).to.be.above(0);\r",
+					"    });\r",
+					"\r",
+					"    // Prepare address → symbol mapping from collection variables\r",
+					"    const addressToSymbol = {};\r",
+					"    const vars = pm.collectionVariables.toObject();\r",
+					"    Object.keys(vars).forEach(key => {\r",
+					"        addressToSymbol[vars[key]] = key; // value = address, key = symbol\r",
+					"    });\r",
+					"\r",
+					"    // Decide which tokens to validate\r",
+					"    const tokensToValidate = validateAll ? tokenKeys : [tokenKeys[0]];\r",
+					"\r",
+					"    tokensToValidate.forEach((tokenAddress) => {\r",
+					"        const tokenData = jsonData[tokenAddress];\r",
+					"        const tokenSymbol = addressToSymbol[tokenAddress] || tokenData.symbol || tokenAddress;\r",
+					"\r",
+					"        pm.test(\\`Price data structure for \\${tokenSymbol}\\`, () => {\r",
+					"            // Required fields\r",
+					"            pm.expect(tokenData).to.have.property('decimals');\r",
+					"            pm.expect(tokenData.decimals).to.be.a('number');\r",
+					"\r",
+					"            pm.expect(tokenData).to.have.property('usdPrice');\r",
+					"            pm.expect(tokenData.usdPrice).to.be.a('number');\r",
+					"\r",
+					"            // Nullable fields\r",
+					"            if (tokenData.hasOwnProperty('blockId') && tokenData.blockId !== null) {\r",
+					"                pm.expect(tokenData.blockId).to.be.a('number');\r",
+					"            }\r",
+					"\r",
+					"            if (tokenData.hasOwnProperty('priceChange24h') && tokenData.priceChange24h !== null) {\r",
+					"                pm.expect(tokenData.priceChange24h).to.be.a('number');\r",
+					"            }\r",
+					"        });\r",
+					"    });\r",
+					"}\r",
+					"`);\r",
+					"\r",
+					"\r",
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://lite-api.jup.ag"
+		},
+		{
+			"key": "SwapAPI",
+			"value": "{{baseUrl}}/swap/v1"
+		},
+		{
+			"key": "quoteResponse",
+			"value": ""
+		},
+		{
+			"key": "TokenAPI",
+			"value": "{{baseUrl}}/tokens/v2"
+		},
+		{
+			"key": "PriceAPI",
+			"value": "{{baseUrl}}/price/v3"
+		},
+		{
+			"key": "wSOL",
+			"value": "So11111111111111111111111111111111111111112"
+		},
+		{
+			"key": "USDC",
+			"value": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+		},
+		{
+			"key": "USDT",
+			"value": "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			}
+		},
+		{
+			"key": "JPL",
+			"value": "27G8MtK7VtTcCHkpASjSDdkWWYfoqT6ggEuKidVJidD4",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			}
+		},
+		{
+			"key": "Fartcoin",
+			"value": "9BB6NFEcjBCtnNLFko2FqVQBq8HHM13kCyYcdQbgpump",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			}
+		},
+		{
+			"key": "Pump",
+			"value": "pumpCmXqMfrsAkQ5r49WcJnRayYRqmXz6ae8H7H9Dfn",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			}
+		},
+		{
+			"key": "PENGU",
+			"value": "2zMMhcVQEXDtdE6vsFS7S7D5oUodfJHE8vd1gnBouauv",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			}
+		},
+		{
+			"key": "USELESS ",
+			"value": "Dz9mQ9NzkBcCsuGPFJ3r1bS4wgqKMHBPiVuniW8Mbonk",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			}
+		},
+		{
+			"key": "wrongSizeMint",
+			"value": "tururu",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			}
+		},
+		{
+			"key": "invalidMint",
+			"value": "DezXAZ8z7PnrnRJjz3wXBoRgixCa6x2B8h4wG4w8nM22",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			}
+		},
+		{
+			"key": "TRUMP",
+			"value": "6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			}
+		},
+		{
+			"key": "BONK",
+			"value": "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			}
+		},
+		{
+			"key": "missingFieldIndex",
+			"value": ""
+		},
+		{
+			"key": "userPublicKey",
+			"value": "jdocuPgEAjMfihABsPgKEvYtsmMzjUHeq9LX4Hvs7f3",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			}
+		},
+		{
+			"key": "basicTokenSearchValidation",
+			"value": ""
+		},
+		{
+			"key": "basicPriceValidation",
+			"value": ""
+		},
+		{
+			"key": "basicQuoteValidation",
+			"value": ""
+		},
+		{
+			"key": "basicSwapValidation",
+			"value": ""
+		},
+		{
+			"key": "basicSwapInstructionsValidation",
+			"value": ""
+		}
+	]
+}

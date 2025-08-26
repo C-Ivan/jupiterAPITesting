@@ -1,0 +1,572 @@
+{
+	"info": {
+		"_postman_id": "2c490668-f864-4995-b34e-21faa506d811",
+		"name": "Jupiter - exploratory - manual",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "4415733"
+	},
+	"item": [
+		{
+			"name": "Swap",
+			"item": [
+				{
+					"name": "Quote",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"// Set the results in a variable\r",
+									"pm.collectionVariables.set(\"quoteResponse\", JSON.stringify(response));"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{SwapAPI}}/quote?inputMint={{wSOL}}&outputMint={{USDC}}&amount=1000000000000&slippageBps=0&restrictIntermediateTokens=true",
+							"host": [
+								"{{SwapAPI}}"
+							],
+							"path": [
+								"quote"
+							],
+							"query": [
+								{
+									"key": "inputMint",
+									"value": "{{wSOL}}"
+								},
+								{
+									"key": "outputMint",
+									"value": "{{USDC}}"
+								},
+								{
+									"key": "amount",
+									"value": "1000000000000"
+								},
+								{
+									"key": "slippageBps",
+									"value": "0"
+								},
+								{
+									"key": "restrictIntermediateTokens",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "swap",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const swapApiUrl = pm.variables.replaceIn(\"{{SwapAPI}}\");\r",
+									"\r",
+									"// Define query params for quote\r",
+									"const inputMint = pm.collectionVariables.get(\"wSOL\");\r",
+									"const outputMint = pm.collectionVariables.get(\"USDC\"); \r",
+									"const amount = 1000000; // 0.001 SOL with 9 decimals\r",
+									"const slippageBps = 50; // 0.5%\r",
+									"const onlyDirectRoutes = true;\r",
+									"\r",
+									"const url = `${swapApiUrl}/quote?inputMint=${inputMint}&outputMint=${outputMint}&amount=${amount}&slippageBps=${slippageBps}&onlyDirectRoutes=${onlyDirectRoutes}`;\r",
+									"\r",
+									"pm.sendRequest({\r",
+									"    url: url,\r",
+									"    method: \"GET\",\r",
+									"    header: {\r",
+									"        \"Accept\": \"application/json\"\r",
+									"    }\r",
+									"}, (err, res) => {\r",
+									"    if (err) {\r",
+									"        console.error(\"Quote request failed:\", err);\r",
+									"    } else {\r",
+									"        const json = res.json();\r",
+									"        console.log(\"Quote Response:\", json);\r",
+									"\r",
+									"        // Save entire quote response for later use\r",
+									"        pm.variables.set(\"lastQuote\", JSON.stringify(json));\r",
+									"\r",
+									"        // Check routePlan length to ensure there is exactly one route plan item.\r",
+									"        const routeLength = json.routePlan.length;\r",
+									"        pm.expect(routeLength).to.eql(1);\r",
+									"\r",
+									"    }\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"eval(pm.globals.get(\"basicSwapValidation\"));\r",
+									"basicSwapValidation(pm.response.json());"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userPublicKey\": \"jdocuPgEAjMfihABsPgKEvYtsmMzjUHeq9LX4Hvs7f3\",\r\n  \"quoteResponse\": {{quoteResponse}},\r\n  \"prioritizationFeeLamports\": {\r\n    \"priorityLevelWithMaxLamports\": {\r\n      \"maxLamports\": 10000000,\r\n      \"priorityLevel\": \"veryHigh\"\r\n    }\r\n  },\r\n  \"dynamicComputeUnitLimit\": true,\r\n  \"dynamicSlippage\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{SwapAPI}}/swap",
+							"host": [
+								"{{SwapAPI}}"
+							],
+							"path": [
+								"swap"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "swapInstructions",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const swapApiUrl = pm.variables.replaceIn(\"{{SwapAPI}}\");\r",
+									"\r",
+									"// Define query params for quote\r",
+									"const inputMint = pm.collectionVariables.get(\"wSOL\");\r",
+									"const outputMint = pm.collectionVariables.get(\"USDC\"); \r",
+									"const amount = 1000000; // 0.001 SOL with 9 decimals\r",
+									"const slippageBps = 50; // 0.5%\r",
+									"\r",
+									"const url = `${swapApiUrl}/quote?inputMint=${inputMint}&outputMint=${outputMint}&amount=${amount}&slippageBps=${slippageBps}`;\r",
+									"\r",
+									"pm.sendRequest({\r",
+									"    url: url,\r",
+									"    method: \"GET\",\r",
+									"    header: {\r",
+									"        \"Accept\": \"application/json\"\r",
+									"    }\r",
+									"}, (err, res) => {\r",
+									"    if (err) {\r",
+									"        console.error(\"Quote request failed:\", err);\r",
+									"    } else {\r",
+									"        const json = res.json();\r",
+									"        console.log(\"Quote Response:\", json);\r",
+									"\r",
+									"        // Save entire quote response for later use\r",
+									"        pm.variables.set(\"quoteResponse\", JSON.stringify(json));\r",
+									"    }\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"eval(pm.globals.get(\"basicSwapInstructionsValidation\"));\r",
+									"basicSwapInstructionsValidation(pm.response.json());"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userPublicKey\": \"jdocuPgEAjMfihABsPgKEvYtsmMzjUHeq9LX4Hvs7f3\",\r\n  \"quoteResponse\": {{quoteResponse}},\r\n  \"prioritizationFeeLamports\": {\r\n    \"priorityLevelWithMaxLamports\": {\r\n      \"maxLamports\": 10000000,\r\n      \"priorityLevel\": \"veryHigh\"\r\n    }\r\n  },\r\n  \"dynamicComputeUnitLimit\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{SwapAPI}}/swap-instructions",
+							"host": [
+								"{{SwapAPI}}"
+							],
+							"path": [
+								"swap-instructions"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Token",
+			"item": [
+				{
+					"name": "Search",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"eval(pm.globals.get(\"basicTokenSearchValidation\"));\r",
+									"basicTokenSearchValidation(pm.response.json(), true);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{TokenAPI}}/search?query={{wSOL}}",
+							"host": [
+								"{{TokenAPI}}"
+							],
+							"path": [
+								"search"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "{{wSOL}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Tag",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{TokenAPI}}/tag?query=asd",
+							"host": [
+								"{{TokenAPI}}"
+							],
+							"path": [
+								"tag"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "asd"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Category",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Category options\r",
+									"const categoryOptions = [\"toporganicscore\", \"toptraded\", \"toptrending\"];\r",
+									"const randomCategory = categoryOptions[Math.floor(Math.random() * categoryOptions.length)];\r",
+									"pm.variables.set(\"categoryPath\", randomCategory);\r",
+									"\r",
+									"// Interval options\r",
+									"const intervalOptions = [\"5m\", \"1h\", \"6h\", \"24h\"];\r",
+									"const randomInterval = intervalOptions[Math.floor(Math.random() * intervalOptions.length)];\r",
+									"pm.variables.set(\"intervalQuery\", randomInterval);\r",
+									"\r",
+									"// Log for debugging\r",
+									"console.log(\"Selected category:\", randomCategory);\r",
+									"console.log(\"Selected interval:\", randomInterval);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"eval(pm.globals.get(\"basicTokenSearchValidation\"));\r",
+									"basicTokenSearchValidation(pm.response.json(), true);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{TokenAPI}}/:category/:interval?limit=500",
+							"host": [
+								"{{TokenAPI}}"
+							],
+							"path": [
+								":category",
+								":interval"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "500"
+								}
+							],
+							"variable": [
+								{
+									"key": "category",
+									"value": "toptraded"
+								},
+								{
+									"key": "interval",
+									"value": "5m"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Price",
+			"item": [
+				{
+					"name": "Price",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{PriceAPI}}?ids={{USDC}}, {{USELESS }}, {{wSOL}}",
+							"host": [
+								"{{PriceAPI}}"
+							],
+							"query": [
+								{
+									"key": "ids",
+									"value": "{{USDC}}, {{USELESS }}, {{wSOL}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://lite-api.jup.ag"
+		},
+		{
+			"key": "SwapAPI",
+			"value": "{{baseUrl}}/swap/v1"
+		},
+		{
+			"key": "quoteResponse",
+			"value": ""
+		},
+		{
+			"key": "TokenAPI",
+			"value": "{{baseUrl}}/tokens/v2"
+		},
+		{
+			"key": "PriceAPI",
+			"value": "{{baseUrl}}/price/v3"
+		},
+		{
+			"key": "wSOL",
+			"value": "So11111111111111111111111111111111111111112"
+		},
+		{
+			"key": "USDC",
+			"value": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+		},
+		{
+			"key": "USDT",
+			"value": "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			}
+		},
+		{
+			"key": "JPL",
+			"value": "27G8MtK7VtTcCHkpASjSDdkWWYfoqT6ggEuKidVJidD4",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			}
+		},
+		{
+			"key": "Fartcoin",
+			"value": "9BB6NFEcjBCtnNLFko2FqVQBq8HHM13kCyYcdQbgpump",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			}
+		},
+		{
+			"key": "Pump",
+			"value": "pumpCmXqMfrsAkQ5r49WcJnRayYRqmXz6ae8H7H9Dfn",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			}
+		},
+		{
+			"key": "PENGU",
+			"value": "2zMMhcVQEXDtdE6vsFS7S7D5oUodfJHE8vd1gnBouauv",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			}
+		},
+		{
+			"key": "USELESS ",
+			"value": "Dz9mQ9NzkBcCsuGPFJ3r1bS4wgqKMHBPiVuniW8Mbonk",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			}
+		},
+		{
+			"key": "wrongSizeMint",
+			"value": "tururu",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			}
+		},
+		{
+			"key": "invalidMint",
+			"value": "DezXAZ8z7PnrnRJjz3wXBoRgixCa6x2B8h4wG4w8nM22",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			}
+		},
+		{
+			"key": "TRUMP",
+			"value": "6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			}
+		},
+		{
+			"key": "BONK",
+			"value": "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			}
+		},
+		{
+			"key": "missingFieldIndex",
+			"value": ""
+		},
+		{
+			"key": "userPublicKey",
+			"value": "jdocuPgEAjMfihABsPgKEvYtsmMzjUHeq9LX4Hvs7f3",
+			"description": {
+				"content": "",
+				"type": "text/plain"
+			}
+		},
+		{
+			"key": "basicTokenSearchValidation",
+			"value": ""
+		},
+		{
+			"key": "basicPriceValidation",
+			"value": ""
+		},
+		{
+			"key": "basicQuoteValidation",
+			"value": ""
+		},
+		{
+			"key": "basicSwapValidation",
+			"value": ""
+		},
+		{
+			"key": "basicSwapInstructionsValidation",
+			"value": ""
+		}
+	]
+}

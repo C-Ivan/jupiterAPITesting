@@ -1,0 +1,36 @@
+name: API Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run API tests
+        run: node run-tests.js
+
+      - name: Upload test reports as artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: api-test-reports
+          path: reports/
+
+      - name: Add index.html link to Action summary
+        if: always()
+        run: |
+          echo "📄 [View Test Reports](./reports/index.html)" >> $GITHUB_STEP_SUMMARY

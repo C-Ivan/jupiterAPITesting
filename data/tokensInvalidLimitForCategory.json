@@ -1,0 +1,8 @@
+[
+  { "case": "Negative limit", "limit": -1, "expectedStatus": 400 },
+  { "case": "Zero limit", "limit": 0, "expectedStatus": 400 },
+  { "case": "Exceeded limit", "limit": 101, "expectedStatus": 200 },
+  { "case": "Decimal limit", "limit": 1.5, "expectedStatus": 200 },
+  { "case": "String limit", "limit": "abc", "expectedStatus": 400 },
+  { "case": "Missing limit", "limit": "", "expectedStatus": 400 }
+]

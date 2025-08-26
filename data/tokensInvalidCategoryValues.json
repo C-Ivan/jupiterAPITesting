@@ -1,0 +1,52 @@
+[
+  {
+    "case": "Invalid category",
+    "category": "invalidCategory",
+    "interval": "1h",
+    "expectedStatus": 200,
+    "expectEmptyArray": true
+  },
+  {
+    "case": "Empty category",
+    "category": "",
+    "interval": "1h",
+    "expectedStatus": 404
+  },
+  {
+    "case": "Null category",
+    "category": null,
+    "interval": "1h",
+    "expectedStatus": 200,
+    "expectEmptyArray": true
+  },
+  {
+    "case": "Missing category",
+    "category": "",
+    "interval": "1h",
+    "expectedStatus": 404
+  },
+  {
+    "case": "Invalid interval",
+    "category": "toptraded",
+    "interval": "invalidInterval",
+    "expectedStatus": 400
+  },
+  {
+    "case": "Empty interval",
+    "category": "toptraded",
+    "interval": "",
+    "expectedStatus": 404
+  },
+  {
+    "case": "Null interval",
+    "category": "toptraded",
+    "interval": null,
+    "expectedStatus": 400
+  },
+  {
+    "case": "Missing interval",
+    "category": "toptraded",
+    "interval": "",
+    "expectedStatus": 404
+  }
+]
