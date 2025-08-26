@@ -44,8 +44,6 @@ jobs:
       - name: Deploy test reports
         id: deployment
         uses: actions/deploy-pages@v4
-        with:
-          artifact: ./reports
 
       - name: Add report link to PR summary
         if: always()
