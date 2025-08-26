@@ -33,16 +33,16 @@ jobs:
           mv ./reports/* ./reports/pr-${{ github.event.pull_request.number }}/
 
       - name: Setup GitHub Pages
-        uses: actions/configure-pages@v2
+        uses: actions/configure-pages@v4
 
       - name: Upload test reports
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           path: ./reports
 
       - name: Deploy test reports
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v4
         with:
           artifact: ./reports
 
