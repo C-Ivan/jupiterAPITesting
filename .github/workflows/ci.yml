@@ -6,8 +6,6 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 jobs:
   run-tests:
@@ -33,19 +31,13 @@ jobs:
           shopt -s extglob
           mv ./reports/!(pr-${{ github.event.pull_request.number }}) ./reports/pr-${{ github.event.pull_request.number }}/ || true
 
-      - name: Setup GitHub Pages
-        uses: actions/configure-pages@v4
-
-      - name: Upload test reports
-        uses: actions/upload-pages-artifact@v3
+      - name: Upload PR test reports
+        uses: actions/upload-artifact@v3
         with:
+          name: "API Test Reports - PR #${{ github.event.pull_request.number }}"
           path: ./reports
 
-      - name: Deploy test reports
-        id: deployment
-        uses: actions/deploy-pages@v4
-
-      - name: Add report link to PR summary
+      - name: Add artifact link to PR summary
         if: always()
         run: |
-          echo "📄 [View API Test Reports for PR #${{ github.event.pull_request.number }}](${{ steps.deployment.outputs.page_url }}/pr-${{ github.event.pull_request.number }}/index.html)" >> $GITHUB_STEP_SUMMARY
+          echo "📄 [Download API Test Reports for PR #${{ github.event.pull_request.number }}](https://github.com/${{ github.repository }}/suites/${{ github.run_id }}/artifacts)" >> $GITHUB_STEP_SUMMARY
