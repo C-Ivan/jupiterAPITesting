@@ -1,11 +1,11 @@
 [
-  { "invalidMint": "So111" },
-  { "invalidMint": "So1111111111111111111111111111111111111111111111" },
-  { "invalidMint": "!@#$%^&*()" },
-  { "invalidMint": "" },
-  { "invalidMint": "null" },
-  { "invalidMint": "12345678901234567890123456" },
-  { "invalidMint": "1234!abcd" },
-  { "invalidMint": "INVALIDTOKEN" },
-  { "invalidMint": "So11111111111111111111111111111111111111113" }
+  { "invalidMint": "So111", "expectedError": "Query parameter inputMint cannot be parsed: WrongSize" },
+  { "invalidMint": "So1111111111111111111111111111111111111111111111", "expectedError": "Query parameter inputMint cannot be parsed: WrongSize" },
+  { "invalidMint": "!@#$%^&*()", "expectedError": "Query parameter inputMint cannot be parsed: Invalid" },
+  { "invalidMint": "", "expectedError": "Query parameter inputMint cannot be parsed: WrongSize" },
+  { "invalidMint": "null", "expectedError": "Query parameter inputMint cannot be parsed: Invalid" },
+  { "invalidMint": "12345678901234567890123456", "expectedError": "Query parameter inputMint cannot be parsed: Invalid" },
+  { "invalidMint": "1234!abcd", "expectedError": "Query parameter inputMint cannot be parsed: Invalid" },
+  { "invalidMint": "INVALIDTOKEN", "expectedError": "Query parameter inputMint cannot be parsed: Invalid" },
+  { "invalidMint": "So11111111111111111111111111111111111111113", "expectedError": "The token So11111111111111111111111111111111111111113 is not tradable" }
 ]

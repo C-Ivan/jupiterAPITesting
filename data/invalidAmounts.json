@@ -1,12 +1,12 @@
 [
-  { "invalidAmount": -1 },
-  { "invalidAmount": 0 },
-  { "invalidAmount": 0.5 },
-  { "invalidAmount": "abc" },
-  { "invalidAmount": "" },
-  { "invalidAmount": null },
-  { "invalidAmount": 1e30 },
-  { "invalidAmount": "1000000000000000000000000" },
-  { "invalidAmount": true },
-  { "invalidAmount": false }
+  { "invalidAmount": 0, "expectedError": "Could not find any route", "expectedErrorCode": "COULD_NOT_FIND_ANY_ROUTE" },
+  { "invalidAmount": "", "expectedError": "Query parameter amount cannot be parsed: ParseIntError { kind: Empty }" },
+  { "invalidAmount": -1, "expectedError": "Query parameter amount cannot be parsed: ParseIntError { kind: InvalidDigit }" },
+  { "invalidAmount": 0.5, "expectedError": "Query parameter amount cannot be parsed: ParseIntError { kind: InvalidDigit }" },
+  { "invalidAmount": "abc", "expectedError": "Query parameter amount cannot be parsed: ParseIntError { kind: InvalidDigit }" },
+  { "invalidAmount": null, "expectedError": "Query parameter amount cannot be parsed: ParseIntError { kind: InvalidDigit }" },
+  { "invalidAmount": 1e30, "expectedError": "Query parameter amount cannot be parsed: ParseIntError { kind: InvalidDigit }" },
+  { "invalidAmount": "1000000000000000000000000", "expectedError": "Query parameter amount cannot be parsed: ParseIntError { kind: PosOverflow }" },
+  { "invalidAmount": true, "expectedError": "Query parameter amount cannot be parsed: ParseIntError { kind: InvalidDigit }" },
+  { "invalidAmount": false, "expectedError": "Query parameter amount cannot be parsed: ParseIntError { kind: InvalidDigit }" }
 ]

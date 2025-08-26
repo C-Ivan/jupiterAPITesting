@@ -3,12 +3,14 @@
     "case": "missing userPublicKey",
     "userPublicKey": "",
     "quoteResponse": "{{lastQuote}}",
-    "expectedStatus": 422
+    "expectedStatus": 422,
+    "expectedErrorSubstring": "WrongSize"
   },
   {
     "case": "missing quoteResponse",
     "userPublicKey": "jdocuPgEAjMfihABsPgKEvYtsmMzjUHeq9LX4Hvs7f3",
     "quoteResponse": "",
-    "expectedStatus": 400
+    "expectedStatus": 400,
+    "expectedErrorSubstring": "expected value"
   }
 ]

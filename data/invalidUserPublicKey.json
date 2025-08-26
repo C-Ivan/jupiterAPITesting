@@ -1,10 +1,10 @@
 [
-  { "invalidUserPublicKey": "So111" },
-  { "invalidUserPublicKey": "So1111111111111111111111111111111111111111111111" },
-  { "invalidUserPublicKey": "!@#$%^&*()" },
-  { "invalidUserPublicKey": "" },
-  { "invalidUserPublicKey": "null" },
-  { "invalidUserPublicKey": "12345678901234567890123456" },
-  { "invalidUserPublicKey": "1234!abcd" },
-  { "invalidUserPublicKey": "INVALIDTOKEN" }
+  { "invalidUserPublicKey": "So111", "expectedErrorType": "WrongSize" },
+  { "invalidUserPublicKey": "So1111111111111111111111111111111111111111111111", "expectedErrorType": "WrongSize" },
+  { "invalidUserPublicKey": "!@#$%^&*()", "expectedErrorType": "Invalid" },
+  { "invalidUserPublicKey": "", "expectedErrorType": "WrongSize" },
+  { "invalidUserPublicKey": "null", "expectedErrorType": "Invalid" },
+  { "invalidUserPublicKey": "12345678901234567890123456", "expectedErrorType": "Invalid" },
+  { "invalidUserPublicKey": "1234!abcd", "expectedErrorType": "Invalid" },
+  { "invalidUserPublicKey": "INVALIDTOKEN", "expectedErrorType": "Invalid" }
 ]
