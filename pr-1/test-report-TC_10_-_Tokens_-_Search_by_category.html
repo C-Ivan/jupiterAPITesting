@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="en" style="overflow-y: scroll;">
+<head>
+  <meta charset="UTF-8">
+  <title>Jupiter API Test Report</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/default.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/v/bs4/dt-1.10.18/datatables.min.css"/>
+
+<style>
+code.renderMarkdown table, code.renderMarkdown th, code.renderMarkdown td {
+    border: 1px solid black;
+    width: max-content;
+    padding: .75rem;
+}
+
+.theme-dark {
+    --background-color: #222;
+    --bg-card-deck: #444444;
+    --text-color: #ccd2d8;
+    --tab-border: solid 1px #444;
+    --success: #3c9372;
+    --failure: #c24a3f;
+    --warning: #d28c23;
+    --info: #4083b6;
+    --badge-outline: #3c9372;
+    --badge-bg: #cdd3db;
+    --badge-text: #ccd2d9;
+    --failure-row: #c24a3f;
+    --warning-row: #d28c23;
+    --card-bg: #444;
+    --card-footer: #4f5758;
+    --form-input: #ececb5;
+    --hov-text: #d2dae5;
+    --h4-text: #ccd1d9;
+}
+
+.theme-light {
+    --tab-border: solid 1px #fff;
+    --text-color: #000000;
+    --success: #42a745;
+    --failure: #dc3544;
+    --warning: #f4c10b;
+    --info: #49a1b8;
+    --badge-outline: #040411;
+    --badge-bg: #f8f9fa;
+    --badge-text: #fff;
+    --failure-row: #f5c6cb;
+    --warning-row: #ffeeba;
+    --card-bg: #f7f7f7;
+    --hov-text: #fff;
+    --h4-text: #ffffff;
+}
+
+body {
+  padding-top:30px;
+  background-color: var(--background-color)!important;
+  color: var(--text-color);
+}
+
+#execution-data {
+  padding: 10px;
+  border: var(--tab-border);
+  border-top: none;
+}
+
+.nav-tabs {
+  padding-top: 10px;
+  height: 105px;
+  overflow-y: auto;
+}
+
+body.theme-dark .card-header {
+    background-color: #444;
+}
+
+body.theme-light .card-header {
+    background-color: #f7f7f7;
+}
+
+.card-footer {
+    padding: .75rem 1.25rem;
+    background-color: var(--card-footer);
+}
+
+.card-deck {
+    background-color: var(--bg-card-deck)!important;
+}
+.form-control {
+    background: var(--form-input);
+}
+
+.custom-tab {
+  padding: 10px 15px;
+  margin-right: 0px;
+  height: 47px;
+  width: 69px;
+  text-align: center;
+  border: var(--tab-border);
+  border-bottom: none;
+  cursor:pointer;
+}
+
+body.theme-dark .text-white {
+    color: #ccd2d9!important;
+}
+h4 {
+    color: var(--h4-text);
+}
+
+body.theme-dark h1 {
+    color: #ccd2da;
+}
+
+body.theme-dark .bg-light>td {
+    background: #4f5858!important;
+}
+
+body.theme-dark .hljs {
+    background: #0a0a0ab0!important;
+    color: #8d8787!important;
+}
+
+.bg-info {
+    background-color: var(--info)!important;
+}
+.bg-success {
+    background-color: var(--success)!important;
+}
+
+.alert-success {
+    background-color: var(--success)!important;
+}
+
+.alert-warning {
+    background-color: var(--warning)!important;
+}
+
+.alert-info {
+    background-color: var(--info)!important;
+}
+
+.bg-warning {
+    background-color: var(--warning)!important;
+}
+
+.badge-warning {
+    color: var(--badge-text)!important;
+    background-color: var(--warning)!important;
+}
+
+.table-warning>td {
+    background-color: var(--warning-row);
+}
+
+.alert-danger {
+    background-color: var(--failure)!important;
+}
+
+body.theme-dark .alert-dark {
+    background-color: #636467!important;
+}
+
+body.theme-dark .text-dark {
+    color: #d1dae4!important;
+}
+
+body.theme-dark .badge-light {
+    color: #212529;
+    background-color: #cdd3db;
+}
+
+body.theme-light .badge-light {
+    color: #212529;
+    background-color: #f8f9fa;
+}
+body.theme-light .bg-danger {
+    background-color: var(--failure)!important;
+}
+
+body.theme-dark .bg-danger {
+    background-color: var(--failure)!important;
+}
+
+.table-danger>td {
+    background-color: var(--failure-row);
+}
+
+body.theme-dark .table .thead-light th {
+    background-color: #4f5858!important;
+    border-color: #dee2e6!important;
+    color: #ccd2d8!important;
+}
+
+.itPassed {
+  background: var(--success);
+  color: white;
+}
+.itFailed {
+  background: var(--failure);
+  color: white;
+}
+
+.resultsInfoPass {
+  color: var(--success);
+  padding-top: 4px;
+}
+
+.resultsInfoFail {
+  color: var(--failure);
+  padding-top: 4px;
+}
+
+.badge-outline-success {
+  color: var(--success);
+  border: 1px solid var(--success);
+  background-color: transparent;
+}
+
+.badge-outline {
+  color: var(--badge-outline);
+  border: 1px solid var(--badge-outline);
+  background-color: transparent;
+}
+
+.btn-outline-success {
+    color: var(--success)!important;
+    border-color: var(--success)!important;
+}
+
+.backToTop:hover {
+  background-color: var(--success);
+  border-color: var(--success);
+  color: var(--hov-text)!important;
+}
+
+.btn-outline-success:hover {
+  background-color: var(--success);
+  border-color: var(--success);
+  color: var(--hov-text)!important;
+}
+
+.btn-outline-secondary {
+  background-color: var(--success)!important;
+  color: var(--hov-text)!important;
+}
+
+body.theme-dark .env-heading {
+    color: #ccd2d9!important;
+}
+
+body, html {
+  height:100%;
+}
+
+.card {
+  overflow:hidden;
+}
+
+body.theme-dark .card-body {
+    background-color: #444;
+}
+
+body.theme-light .card-body {
+    background-color: #f7f7f7;
+}
+
+body.theme-dark .card-body .bg-danger {
+    background-color: var(--failure)!important;
+}
+
+body.theme-light .card-body .bg-danger {
+    background-color: var(--failure)!important;
+}
+
+.card-body .rotate {
+  z-index: 8;
+  float: right;
+  height: 100%;
+}
+
+.card-body .rotate i {
+  color: #14141426;
+  position: absolute;
+  left: 0;
+  left: auto;
+  right: -10px;
+  bottom: 0;
+  display: block;
+  -webkit-transform: rotate(-44deg);
+  -moz-transform: rotate(-44deg);
+  -o-transform: rotate(-44deg);
+  -ms-transform: rotate(-44deg);
+  transform: rotate(-44deg);
+}
+
+.dyn-height {
+  max-height:350px;
+  overflow-y:auto;
+}
+
+.nav-pills .nav-link.active {
+  background-color: transparent!important;
+}
+
+.backToTop {
+  display: none;
+  position: fixed;
+  bottom: 10px;
+  right: 20px;
+  z-index: 99;
+  font-size: 15px;
+  outline: none;
+  cursor: pointer;
+  padding: 15px;
+  border-radius: 4px;
+}
+
+.card-header .fa {
+  transition: .3s transform ease-in-out;
+}
+.card-header .collapsed .fa {
+  transform: rotate(90deg);
+}
+
+.single-line-tabs {
+  padding-top: 10px;
+  height: 60px;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 20px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 0px;
+  bottom: 4px;
+  top: 0;
+  bottom: 0;
+  margin: auto 0;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+  box-shadow: 0 0px 15px #2020203d;
+  background: white;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+input:checked + .slider {
+  background-color: #4083b6;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #4083b6;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(24px);
+  -ms-transform: translateX(24px);
+  transform: translateX(24px);
+  background: white;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+table.dataTable td, table.dataTable tr {
+    vertical-align: middle;
+}
+
+body.theme-dark code {
+    color: #ccd2d8!important;
+}
+
+body.theme-light code {
+    color: #000000!important;
+}
+
+.text-wrap {
+    word-wrap: break-word; 
+    min-width: 600px; 
+    max-width: 600px; 
+    white-space: normal;
+}
+
+</style>
+</head>
+<body class="theme-dark">
+<script>
+    function setTheme(themeName) {
+        localStorage.setItem('theme', themeName);
+        document.body.className = themeName;
+    }
+
+    function toggleTheme() {
+        if (localStorage.getItem('theme') === 'theme-light') {
+            setTheme('theme-dark');
+        } else {
+            setTheme('theme-light');
+        }
+    }
+</script>
+  <div class="container">
+        <div class="container">
+            <label>Light</label>
+            <label id="switch" class="switch">
+                <input type="checkbox" onchange="toggleTheme()" id="slider">
+                <span class="slider round"></span>
+            </label>
+            <label>Dark</label>
+        </div>
+        <div class="card">
+        <div class="card-header">
+            <ul class="nav nav-pills mb-3 nav-justified" id="pills-tab" role="tablist">
+            <li class="nav-item bg-info active" data-toggle="tooltip" title="Click to view the Summary">
+                <a class="nav-link text-white" id="pills-summary-tab" data-toggle="pill" href="#pills-summary" role="tab" aria-controls="pills-summary" aria-selected="true">Summary</a>
+            </li>
+            <li class="nav-item bg-success" data-toggle="tooltip" title="Click to view the Requests">
+                <a class="nav-link text-white" id="pills-requests-tab" data-toggle="pill" href="#pills-requests" role="tab" aria-controls="pills-requests" aria-selected="false">Total Requests <span class="badge badge-light">1</span></a>
+            </li>
+            <li class="nav-item bg-danger" data-toggle="tooltip" title="Click to view the Failed Tests">
+                <a class="nav-link text-white" id="pills-failed-tab" data-toggle="pill" href="#pills-failed" role="tab" aria-controls="pills-failed" aria-selected="false">Failed Tests <span class="badge badge-light">0</span></a>
+            </li>
+            <li class="nav-item bg-warning" data-toggle="tooltip" title="Click to view the Skipped Tests">
+                <a class="nav-link text-white" id="pills-skipped-tab" data-toggle="pill" href="#pills-skipped" role="tab" aria-controls="pills-skipped" aria-selected="false">Skipped Tests <span class="badge badge-light">0</span></a>
+            </li>
+            </ul>
+        <div class="tab-content" id="pills-tabContent">
+            <div class="tab-pane fade show active" id="pills-summary" role="tabcard" aria-labelledby="pills-summary-tab">
+<div class="row">
+  <div class="col-md-9 col-lg-12 main">
+   <h1 class="display-2 text-center">Jupiter API Test Report</h1>
+   <h5 class="text-center">Tuesday, 26 August 2025 15:00:46</h5>
+   <div class="row">
+    <div class="col-lg-3 col-md-6">
+     <div class="card text-white card-success">
+      <div class="card-body bg-success">
+       <div class="rotate">
+        <i class="fa fa-retweet fa-5x"></i>
+       </div>
+       <h6 class="text-uppercase">Total Iterations</h6>
+       <h1 class="display-1">1</h1>
+      </div>
+     </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+     <div class="card text-white card-danger">
+      <div class="card-body bg-success">
+       <div class="rotate">
+        <i class="fa fa-list fa-4x"></i>
+       </div>
+       <h6 class="text-uppercase">Total Assertions</h6>
+       <h1 class="display-1">7</h1>
+      </div>
+     </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+     <div class="card text-white card-info">
+      <div class="card-body bg-success">
+       <div class="rotate">
+        <i class="fa fa-plus-circle fa-5x"></i>
+       </div>
+       <h6 class="text-uppercase">Total Failed Tests</h6>
+       <h1 class="display-1">0</h1>
+      </div>
+     </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+     <div class="card text-white card-warning">
+      <div class="card-body bg-success">
+       <div class="rotate">
+        <i class="fa fa-share fa-5x"></i>
+       </div>
+       <h6 class="text-uppercase">Total Skipped Tests</h6>
+       <h1 class="display-1">0</h1>
+      </div>
+     </div>
+    </div>
+   </div>
+   <hr>
+    <div class="row">
+    <div class="col">
+        <div class="row">
+        <div class="col-sm-12 mb-3">
+            <div class="card border-info">
+                <div class="card-body">
+                <h5 class="card-title text-uppercase text-white text-center bg-info">File Information</h5>
+                <span><i class="fas fa-file-code"></i></span><strong> Collection:</strong> Jupiter - automated<br>
+                
+                
+                </div>
+            </div>
+        </div>
+        </div>
+        <div class="row">
+        <div class="col-sm-12 mb-3">
+            <div class="card border-info">
+                <div class="card-body">
+                <h5 class="card-title text-uppercase text-white text-center bg-info">Timings and Data</h5>
+                <span><i class="fas fa-stopwatch"></i></span><strong> Total run duration:</strong> 204ms<br>
+                <span><i class="fas fa-database"></i></span><strong> Total data received:</strong> 12.31KB<br>
+                <span><i class="fas fa-stopwatch"></i></span><strong> Average response time:</strong> 152ms<br>
+                </div>
+            </div>
+        </div>
+        </div>
+        <div class="row">
+        <div class="col-sm-12 mb-3">
+            <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <thead class="thead-inverse">
+                    <tr class="text-center">
+                        <th class="text-uppercase">Summary Item</th>
+                        <th class="text-uppercase">Total</th>
+                        <th class="text-uppercase">Failed</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Requests</td>
+                        <td class="text-center">1</td>
+                        <td class="text-center">0</td>
+                    </tr>
+                    <tr>
+                        <td>Prerequest Scripts</td>
+                        <td class="text-center">2</td>
+                        <td class="text-center">0</td>
+                    </tr>
+                    <tr>
+                        <td>Test Scripts</td>
+                        <td class="text-center">2</td>
+                        <td class="text-center">0</td>
+                    </tr>
+                    <tr class="">
+                        <td>Assertions</td>
+                        <td class="text-center">7</td>
+                        <td class="text-center">0</td>
+                    </tr>
+                    <tr class="">
+                        <td>Skipped Tests</td>
+                        <td class="text-center">0</td>
+                        <td class="text-center">-</td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
+        </div>
+        </div>
+    <hr>
+   </div>
+   </div>
+  </div>
+ </div>
+        </div>
+            <div class="tab-pane fade" id="pills-failed" role="tabcard" aria-labelledby="pills-failed-tab">
+                <button id="topOfFailuresScreen" class="btn btn-outline-success btn-sm backToTop" onclick="topFunction()">Go To Top</button>
+
+                <div class="alert alert-success text-uppercase text-center">
+                     <br><br><h1 class="text-center">There are no failed tests <span><i class="far fa-thumbs-up"></i></span></h1><br><br>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="pills-skipped" role="tabcard" aria-labelledby="pills-skipped-tab">
+                <button id="topOfSkippedScreen" class="btn btn-outline-success btn-sm backToTop" onclick="topFunction()">Go To Top</button>
+
+                <div class="alert alert-success text-uppercase text-center">
+                    <br><br><h1 class="text-center">There are no skipped tests <span><i class="far fa-thumbs-up"></i></span></h1><br><br>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="pills-requests" role="tabcard" aria-labelledby="pills-requests-tab">
+
+            <button id="topOfRequestsScreen" class="btn btn-outline-success btn-sm backToTop" onclick="topFunction()">Go To Top</button>
+
+            <div class="btn-group float-right" role="group" aria-label="Button Group">
+                <button id="openAll" class="btn btn-outline-success btn-sm float-right" style="text-align: center; width: 140px;">Expand Folders</button>
+                <button id="openAllRequests" class="btn btn-outline-success btn-sm float-right" style="text-align: center; width: 140px;">Expand Requests</button>
+            </div>
+
+    <div class="text-uppercase" id="execution-menu">
+        <h5>1 Iteration available to view</h5>
+        
+        <nav class="table-responsive">
+        <ul class="nav single-line-tabs" id="iterationList">
+        </ul>
+        </nav>
+    </div>
+    <h6 class="text-uppercase text-muted" id="iterationSelected" style="padding-top: 10px;"></h6>
+	<div class="tab-content" id="execution-data">
+            <div id="folder-f3f48592-53ac-4997-ac7a-88809bfb36aa" class="card-deck iteration-0">
+            <div class="row iteration-0">
+                <div class="col-sm-12 mb-3 iteration-0">
+                <div class="card iteration-0">
+                    <div class="card-header  bg-success iteration-0">
+                        <a data-toggle="collapse" href="#" data-target="#collapse-f3f48592-53ac-4997-ac7a-88809bfb36aa" aria-expanded="false" aria-controls="collapse" id="requests-f3f48592-53ac-4997-ac7a-88809bfb36aa" class="collapsed text-white z-block">
+                    Iteration: 1 - TC 10 - Tokens -  Search by category <i class="float-lg-right fa fa-chevron-down" style="padding-top: 5px;"></i>
+                </a>
+                    </div>
+                    <div id="collapse-f3f48592-53ac-4997-ac7a-88809bfb36aa" class="collapse" aria-labelledby="requests-f3f48592-53ac-4997-ac7a-88809bfb36aa">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-12 mb-3">
+                                <div class="card-deck">
+                                <div class="card border-info" style="width: 50rem;">
+                                    <div class="card-body">
+                                    <h5 class="card-title text-uppercase text-white text-center bg-info">Request Information</h5>
+                                    <span><i class="fas fa-info-circle"></i></span><strong> Request Method:</strong> <span class="badge-outline-success badge badge-success"> GET</span><br>
+                                    <span><i class="fas fa-info-circle"></i></span><strong> Request URL:</strong> <a href="https://lite-api.jup.ag/tokens/v2/toptraded/5m?limit&#x3D;5" target="_blank">https://lite-api.jup.ag/tokens/v2/toptraded/5m?limit&#x3D;5</a><br>
+                                    </div>
+                                </div>
+                                <div class="card border-info" style="width: 50rem;">
+                                    <div class="card-body">
+                                    <h5 class="card-title text-uppercase text-white text-center bg-info">Response Information</h5>
+                                    <span><i class="fas fa-info-circle"></i></span><strong> Response Code:</strong> <span class="float-right badge-outline badge badge-success"> 200 - OK</span><br>
+                                    <span><i class="fas fa-stopwatch"></i></span><strong> Mean time per request:</strong> <span class="float-right badge-outline badge badge-success"> 152ms</span><br>
+                                    <span><i class="fas fa-database"></i></span><strong> Mean size per request:</strong> <span class="float-right badge-outline badge badge-success"> 12.31KB</span><br>
+                                    <hr>
+                                    <h5 class="card-title text-uppercase text-white text-center bg-info">Test Pass Percentage</h5>
+                                    <div>
+                                        <div class="progress" style="height: 40px;">
+                                            <div class="progress-bar  bg-success" style="width: 100%" role="progressbar">
+                                            <h5 style="padding-top:5px;"><strong>100 %</strong></h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 mb-3">
+                                <div class="card-deck">
+                                <div class="card border-info" style="width: 50rem;">
+                                    <div class="card-body">
+                                        <h5 class="card-title text-uppercase text-white text-center bg-info">Request Headers</h5>
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered">
+                                            <thead class="thead-light text-center"><tr><th>Header Name</th><th>Header Value</th></tr></thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="text-nowrap">User-Agent</td>
+                                                        <td class="text-wrap">PostmanRuntime/7.39.1</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-nowrap">Accept</td>
+                                                        <td class="text-wrap">*/*</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-nowrap">Cache-Control</td>
+                                                        <td class="text-wrap">no-cache</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-nowrap">Postman-Token</td>
+                                                        <td class="text-wrap">07da6dd2-c34b-4aaf-af2c-a05211315d6b</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-nowrap">Host</td>
+                                                        <td class="text-wrap">lite-api.jup.ag</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-nowrap">Accept-Encoding</td>
+                                                        <td class="text-wrap">gzip, deflate, br</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-nowrap">Connection</td>
+                                                        <td class="text-wrap">keep-alive</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                        <div class="col-sm-12 mb-3">
+                            <div class="card-deck">
+                            <div class="card border-info" style="width: 50rem;">
+                                <div class="card-body">
+                                    <h5 class="card-title text-uppercase text-white text-center bg-info">Response Headers</h5>
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered">
+                                        <thead class="thead-light text-center"><tr><th>Header Name</th><th>Header Value</th></tr></thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="text-nowrap">Content-Type</td>
+                                                    <td class="text-wrap">application/json; charset&#x3D;UTF-8</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Transfer-Encoding</td>
+                                                    <td class="text-wrap">chunked</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Connection</td>
+                                                    <td class="text-wrap">keep-alive</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Date</td>
+                                                    <td class="text-wrap">Tue, 26 Aug 2025 15:00:46 GMT</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Server</td>
+                                                    <td class="text-wrap">cloudflare</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">CF-RAY</td>
+                                                    <td class="text-wrap">975433609a9b1758-SJC</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Content-Encoding</td>
+                                                    <td class="text-wrap">br</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Cache-Control</td>
+                                                    <td class="text-wrap">public, max-age&#x3D;15</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Vary</td>
+                                                    <td class="text-wrap">Origin, Accept-Encoding</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">access-control-allow-credentials</td>
+                                                    <td class="text-wrap">true</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Cf-Placement</td>
+                                                    <td class="text-wrap">local-SJC</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">X-Cache</td>
+                                                    <td class="text-wrap">Miss from cloudfront</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Via</td>
+                                                    <td class="text-wrap">1.1 a0e8b81926c3808f1bb0c65fe46f508c.cloudfront.net (CloudFront)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">X-Amz-Cf-Pop</td>
+                                                    <td class="text-wrap">SFO53-P6</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">X-Amz-Cf-Id</td>
+                                                    <td class="text-wrap">zSTDR8MFh7DYBvd_ERAo5mNIMQUep60ExPrt3PaFDxPoXzWEWg_gYA&#x3D;&#x3D;</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">X-XSS-Protection</td>
+                                                    <td class="text-wrap">1; mode&#x3D;block</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Referrer-Policy</td>
+                                                    <td class="text-wrap">strict-origin-when-cross-origin</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">X-Content-Type-Options</td>
+                                                    <td class="text-wrap">nosniff</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-nowrap">Strict-Transport-Security</td>
+                                                    <td class="text-wrap">max-age&#x3D;31536000</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="row">
+                        <div class="col-sm-12 mb-3">
+                            <div class="card-deck">
+                            <div class="card border-info" style="width: 50rem;">
+                                <div class="card-body">
+                                    <h5 class="card-title text-uppercase text-white text-center bg-info">Response Body</h5>
+                                        <div class="dyn-height">
+                                                <pre><code id="copyText-525eb321-a468-452e-92c5-2108c2eb59ba" class="prettyPrint">[{&quot;id&quot;:&quot;9BB6NFEcjBCtnNLFko2FqVQBq8HHM13kCyYcdQbgpump&quot;,&quot;name&quot;:&quot;Fartcoin&quot;,&quot;symbol&quot;:&quot;Fartcoin&quot;,&quot;icon&quot;:&quot;https://ipfs.io/ipfs/QmQr3Fz4h1etNsF7oLGMRHiCzhB5y9a7GjyodnF7zLHK1g&quot;,&quot;decimals&quot;:6,&quot;dev&quot;:&quot;HyYNVYmnFmi87NsQqWzLJhUTPBKQUfgfhdbBa554nMFF&quot;,&quot;circSupply&quot;:999983118.40675,&quot;totalSupply&quot;:999983118.40675,&quot;tokenProgram&quot;:&quot;TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA&quot;,&quot;launchpad&quot;:&quot;pump.fun&quot;,&quot;firstPool&quot;:{&quot;id&quot;:&quot;9BB6NFEcjBCtnNLFko2FqVQBq8HHM13kCyYcdQbgpump&quot;,&quot;createdAt&quot;:&quot;2024-10-18T06:05:05Z&quot;},&quot;graduatedPool&quot;:&quot;Bzc9NZfMqkXR6fz1DBph7BDf9BroyEf6pnzESP7v5iiw&quot;,&quot;graduatedAt&quot;:&quot;2024-10-18T06:09:47Z&quot;,&quot;holderCount&quot;:169166,&quot;audit&quot;:{&quot;mintAuthorityDisabled&quot;:true,&quot;freezeAuthorityDisabled&quot;:true,&quot;topHoldersPercentage&quot;:29.223143470413156,&quot;devMigrations&quot;:219},&quot;organicScore&quot;:99.17152941159284,&quot;organicScoreLabel&quot;:&quot;high&quot;,&quot;isVerified&quot;:true,&quot;cexes&quot;:[&quot;Bitget&quot;,&quot;Kraken&quot;,&quot;KuCoin&quot;,&quot;MEXC&quot;,&quot;Gate.io&quot;],&quot;tags&quot;:[&quot;community&quot;,&quot;launchpad&quot;,&quot;verified&quot;],&quot;fdv&quot;:794095414.9753692,&quot;mcap&quot;:794095414.9753692,&quot;usdPrice&quot;:0.7941088207974781,&quot;priceBlockId&quot;:362656535,&quot;liquidity&quot;:15260036.52670932,&quot;stats5m&quot;:{&quot;priceChange&quot;:-0.21597930483881078,&quot;holderChange&quot;:1.1075050952406569,&quot;liquidityChange&quot;:1.5579264002164936,&quot;volumeChange&quot;:-61.23875594047276,&quot;buyVolume&quot;:103301.07122251135,&quot;sellVolume&quot;:240110.63717581166,&quot;buyOrganicVolume&quot;:1253.2486046108174,&quot;sellOrganicVolume&quot;:173560.8660652339,&quot;numBuys&quot;:507,&quot;numSells&quot;:502,&quot;numTraders&quot;:240,&quot;numOrganicBuyers&quot;:14,&quot;numNetBuyers&quot;:89},&quot;stats1h&quot;:{&quot;priceChange&quot;:0.8504026357347717,&quot;holderChange&quot;:1.1365198935820406,&quot;liquidityChange&quot;:-3.6146504247782247,&quot;volumeChange&quot;:-20.579339325295464,&quot;buyVolume&quot;:1482592.6093126736,&quot;sellVolume&quot;:1827978.0571152717,&quot;buyOrganicVolume&quot;:507688.6677563706,&quot;sellOrganicVolume&quot;:722009.069157291,&quot;numBuys&quot;:5397,&quot;numSells&quot;:5629,&quot;numTraders&quot;:1377,&quot;numOrganicBuyers&quot;:37,&quot;numNetBuyers&quot;:309},&quot;stats6h&quot;:{&quot;priceChange&quot;:0.6484971149046335,&quot;holderChange&quot;:1.129264632914268,&quot;liquidityChange&quot;:-4.088178250993526,&quot;volumeChange&quot;:63.740674118788945,&quot;buyVolume&quot;:8533858.437936775,&quot;sellVolume&quot;:9091121.458007183,&quot;buyOrganicVolume&quot;:3234630.5405734126,&quot;sellOrganicVolume&quot;:3868810.9428080083,&quot;numBuys&quot;:23154,&quot;numSells&quot;:23915,&quot;numTraders&quot;:4868,&quot;numOrganicBuyers&quot;:177,&quot;numNetBuyers&quot;:1156},&quot;stats24h&quot;:{&quot;priceChange&quot;:-9.929756427833421,&quot;holderChange&quot;:1.3109589943525157,&quot;liquidityChange&quot;:-6.089131596095484,&quot;volumeChange&quot;:-11.69670219515882,&quot;buyVolume&quot;:35718307.56753665,&quot;sellVolume&quot;:39660875.46679336,&quot;buyOrganicVolume&quot;:11761911.929093665,&quot;sellOrganicVolume&quot;:12868765.781661984,&quot;numBuys&quot;:109468,&quot;numSells&quot;:110819,&quot;numTraders&quot;:15179,&quot;numOrganicBuyers&quot;:897,&quot;numNetBuyers&quot;:3943},&quot;ctLikes&quot;:85,&quot;smartCtLikes&quot;:38,&quot;updatedAt&quot;:&quot;2025-08-26T15:00:46.076698525Z&quot;},{&quot;id&quot;:&quot;27G8MtK7VtTcCHkpASjSDdkWWYfoqT6ggEuKidVJidD4&quot;,&quot;name&quot;:&quot;Jupiter Perps&quot;,&quot;symbol&quot;:&quot;JLP&quot;,&quot;icon&quot;:&quot;https://static.jup.ag/jlp/icon.png&quot;,&quot;decimals&quot;:6,&quot;dev&quot;:&quot;mQBipzeneXqnAkWNL8raGvrj2c8dJv87LXs2Hn7BeXk&quot;,&quot;circSupply&quot;:354110782.17916,&quot;totalSupply&quot;:354110782.17916,&quot;tokenProgram&quot;:&quot;TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA&quot;,&quot;mintAuthority&quot;:&quot;AVzP2GeRmqGphJsMxWoqjpUifPpCret7LqWhD8NWQK49&quot;,&quot;freezeAuthority&quot;:&quot;AVzP2GeRmqGphJsMxWoqjpUifPpCret7LqWhD8NWQK49&quot;,&quot;firstPool&quot;:{&quot;id&quot;:&quot;96GCoubLr9Zk6oPEb1wnzuY7PXRqaGF9oP6DSCMPpFE2&quot;,&quot;createdAt&quot;:&quot;2024-02-20T16:18:24Z&quot;},&quot;holderCount&quot;:89745,&quot;audit&quot;:{&quot;topHoldersPercentage&quot;:76.85360606113034,&quot;highSingleOwnership&quot;:true},&quot;organicScore&quot;:98.73645441436253,&quot;organicScoreLabel&quot;:&quot;high&quot;,&quot;isVerified&quot;:true,&quot;tags&quot;:[&quot;community&quot;,&quot;strict&quot;,&quot;verified&quot;],&quot;fdv&quot;:1871980817.2682095,&quot;mcap&quot;:1871980817.2682095,&quot;usdPrice&quot;:5.286427049038832,&quot;priceBlockId&quot;:362656527,&quot;liquidity&quot;:18427251.91127823,&quot;stats5m&quot;:{&quot;priceChange&quot;:0.43523207384555873,&quot;holderChange&quot;:-0.761881593206095,&quot;liquidityChange&quot;:0.20329395965250752,&quot;volumeChange&quot;:-61.225814298684554,&quot;buyVolume&quot;:121093.44198004791,&quot;sellVolume&quot;:116650.69938912374,&quot;buyOrganicVolume&quot;:6347.094524548577,&quot;sellOrganicVolume&quot;:3457.1317959852804,&quot;numBuys&quot;:356,&quot;numSells&quot;:367,&quot;numTraders&quot;:170,&quot;numOrganicBuyers&quot;:9,&quot;numNetBuyers&quot;:9},&quot;stats1h&quot;:{&quot;priceChange&quot;:0.7463168748840844,&quot;holderChange&quot;:-0.761881593206095,&quot;liquidityChange&quot;:0.5450036623023458,&quot;volumeChange&quot;:-25.61071828919609,&quot;buyVolume&quot;:2157111.3378907987,&quot;sellVolume&quot;:2165284.106800868,&quot;buyOrganicVolume&quot;:188772.83867732997,&quot;sellOrganicVolume&quot;:161240.6463009555,&quot;numBuys&quot;:5229,&quot;numSells&quot;:5359,&quot;numTraders&quot;:1362,&quot;numOrganicBuyers&quot;:28,&quot;numNetBuyers&quot;:76},&quot;stats6h&quot;:{&quot;priceChange&quot;:0.4827442760164087,&quot;holderChange&quot;:-0.7629789351467905,&quot;liquidityChange&quot;:2.477735025273882,&quot;volumeChange&quot;:47.686103780486405,&quot;buyVolume&quot;:10057279.89339003,&quot;sellVolume&quot;:9327765.159721969,&quot;buyOrganicVolume&quot;:772266.7786756511,&quot;sellOrganicVolume&quot;:430647.7937602092,&quot;numBuys&quot;:24581,&quot;numSells&quot;:24262,&quot;numTraders&quot;:4524,&quot;numOrganicBuyers&quot;:102,&quot;numNetBuyers&quot;:280},&quot;stats24h&quot;:{&quot;priceChange&quot;:-1.6077998370878446,&quot;holderChange&quot;:-0.6432256493147045,&quot;liquidityChange&quot;:0.8980904070572516,&quot;volumeChange&quot;:-23.098396408133524,&quot;buyVolume&quot;:39527050.42266454,&quot;sellVolume&quot;:35477022.578947365,&quot;buyOrganicVolume&quot;:3180878.1783495564,&quot;sellOrganicVolume&quot;:1739161.5217992407,&quot;numBuys&quot;:96552,&quot;numSells&quot;:96042,&quot;numTraders&quot;:12497,&quot;numOrganicBuyers&quot;:435,&quot;numNetBuyers&quot;:1143},&quot;ctLikes&quot;:79,&quot;smartCtLikes&quot;:42,&quot;updatedAt&quot;:&quot;2025-08-26T15:00:46.076698525Z&quot;},{&quot;id&quot;:&quot;D48KAgWPBSvKpmnVJKBX1uvGKCx9JAHkreuFnbqQpump&quot;,&quot;name&quot;:&quot;OPINION DISMISSED&quot;,&quot;symbol&quot;:&quot;DISMISSED&quot;,&quot;icon&quot;:&quot;https://pbs.twimg.com/media/GzSMbN4XMAEeJ_q.jpg&quot;,&quot;decimals&quot;:6,&quot;twitter&quot;:&quot;https://x.com/WhiteHouse/status/1960346140018086245&quot;,&quot;dev&quot;:&quot;A7R3e1nyxaVQMcAoJ7mYKR1S76Bn7jDoNuostbSCvHyH&quot;,&quot;circSupply&quot;:1000000000,&quot;totalSupply&quot;:1000000000,&quot;tokenProgram&quot;:&quot;TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA&quot;,&quot;launchpad&quot;:&quot;pump.fun&quot;,&quot;firstPool&quot;:{&quot;id&quot;:&quot;D48KAgWPBSvKpmnVJKBX1uvGKCx9JAHkreuFnbqQpump&quot;,&quot;createdAt&quot;:&quot;2025-08-26T14:56:48Z&quot;},&quot;holderCount&quot;:257,&quot;audit&quot;:{&quot;mintAuthorityDisabled&quot;:true,&quot;freezeAuthorityDisabled&quot;:true,&quot;topHoldersPercentage&quot;:20.0310903400188,&quot;devMigrations&quot;:12},&quot;organicScore&quot;:0,&quot;organicScoreLabel&quot;:&quot;low&quot;,&quot;tags&quot;:[&quot;launchpad&quot;,&quot;unknown&quot;],&quot;fdv&quot;:26899.782690758155,&quot;mcap&quot;:26899.782690758155,&quot;usdPrice&quot;:0.000026899782690758154,&quot;priceBlockId&quot;:362656541,&quot;liquidity&quot;:13010.221413509462,&quot;stats5m&quot;:{&quot;priceChange&quot;:317.0890841971991,&quot;holderChange&quot;:1252.6315789473686,&quot;liquidityChange&quot;:46.144764005815816,&quot;buyVolume&quot;:75522.03430424957,&quot;sellVolume&quot;:68266.56167269214,&quot;buyOrganicVolume&quot;:9688.619342752114,&quot;sellOrganicVolume&quot;:6018.075675676795,&quot;numBuys&quot;:897,&quot;numSells&quot;:631,&quot;numTraders&quot;:600,&quot;numNetBuyers&quot;:257},&quot;stats1h&quot;:{&quot;priceChange&quot;:317.0890841971991,&quot;holderChange&quot;:1252.6315789473686,&quot;liquidityChange&quot;:46.144764005815816,&quot;buyVolume&quot;:75522.03430424957,&quot;sellVolume&quot;:68266.56167269214,&quot;buyOrganicVolume&quot;:9688.619342752114,&quot;sellOrganicVolume&quot;:6018.075675676795,&quot;numBuys&quot;:897,&quot;numSells&quot;:631,&quot;numTraders&quot;:600,&quot;numNetBuyers&quot;:257},&quot;stats6h&quot;:{&quot;priceChange&quot;:317.0890841971991,&quot;holderChange&quot;:1252.6315789473686,&quot;liquidityChange&quot;:46.144764005815816,&quot;buyVolume&quot;:75522.03430424957,&quot;sellVolume&quot;:68266.56167269214,&quot;buyOrganicVolume&quot;:9688.619342752114,&quot;sellOrganicVolume&quot;:6018.075675676795,&quot;numBuys&quot;:897,&quot;numSells&quot;:631,&quot;numTraders&quot;:600,&quot;numNetBuyers&quot;:257},&quot;stats24h&quot;:{&quot;priceChange&quot;:317.0890841971991,&quot;holderChange&quot;:1252.6315789473686,&quot;liquidityChange&quot;:46.144764005815816,&quot;buyVolume&quot;:75522.03430424957,&quot;sellVolume&quot;:68266.56167269214,&quot;buyOrganicVolume&quot;:9688.619342752114,&quot;sellOrganicVolume&quot;:6018.075675676795,&quot;numBuys&quot;:897,&quot;numSells&quot;:631,&quot;numTraders&quot;:600,&quot;numNetBuyers&quot;:257},&quot;bondingCurve&quot;:75.64175953999697,&quot;updatedAt&quot;:&quot;2025-08-26T15:00:46.076698525Z&quot;},{&quot;id&quot;:&quot;CdtV6PREwJDWgApj4YB4x5Kmwo3mbNuWMdkEXqyypump&quot;,&quot;name&quot;:&quot;Young Defender of Liberty&quot;,&quot;symbol&quot;:&quot;BRAVEHEART&quot;,&quot;icon&quot;:&quot;https://ipfs.io/ipfs/bafkreihsvt74gek66mamknz6fwxnnkgbacwcmywoxfrk6xo2k53weuxxve&quot;,&quot;decimals&quot;:6,&quot;twitter&quot;:&quot;https://x.com/i/communities/1960286224247042119&quot;,&quot;website&quot;:&quot;https://x.com/Rightanglenews/status/1959972631555297540&quot;,&quot;dev&quot;:&quot;2s5mKHK9Aws9bBKxrWsn9kBmcujv1DnAaBcaUvgFx1kk&quot;,&quot;circSupply&quot;:999999700.338314,&quot;totalSupply&quot;:999999700.338314,&quot;tokenProgram&quot;:&quot;TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA&quot;,&quot;launchpad&quot;:&quot;pump.fun&quot;,&quot;firstPool&quot;:{&quot;id&quot;:&quot;CdtV6PREwJDWgApj4YB4x5Kmwo3mbNuWMdkEXqyypump&quot;,&quot;createdAt&quot;:&quot;2025-08-26T10:35:08Z&quot;},&quot;graduatedPool&quot;:&quot;dgRN68xUqNyZAEArZnsMoAeoSdWJyx52H3kcUDyWUKJ&quot;,&quot;graduatedAt&quot;:&quot;2025-08-26T11:24:09Z&quot;,&quot;holderCount&quot;:2701,&quot;audit&quot;:{&quot;mintAuthorityDisabled&quot;:true,&quot;freezeAuthorityDisabled&quot;:true,&quot;topHoldersPercentage&quot;:15.546300331529666,&quot;snipersHoldingPercentage&quot;:35.608729303416794,&quot;devMigrations&quot;:1},&quot;organicScore&quot;:86.26776478808382,&quot;organicScoreLabel&quot;:&quot;high&quot;,&quot;tags&quot;:[&quot;launchpad&quot;,&quot;unknown&quot;],&quot;fdv&quot;:1447603.520603268,&quot;mcap&quot;:1447603.520603268,&quot;usdPrice&quot;:0.0014476039543947095,&quot;priceBlockId&quot;:362656541,&quot;liquidity&quot;:178486.48594534153,&quot;stats5m&quot;:{&quot;priceChange&quot;:10.945269003387741,&quot;holderChange&quot;:1.5031942878617062,&quot;liquidityChange&quot;:3.8289710250932676,&quot;volumeChange&quot;:11.598464925450665,&quot;buyVolume&quot;:55005.457346348994,&quot;sellVolume&quot;:47503.75462119046,&quot;buyOrganicVolume&quot;:13540.7991589608,&quot;sellOrganicVolume&quot;:11179.120543175142,&quot;numBuys&quot;:409,&quot;numSells&quot;:380,&quot;numTraders&quot;:450,&quot;numOrganicBuyers&quot;:94,&quot;numNetBuyers&quot;:194},&quot;stats1h&quot;:{&quot;priceChange&quot;:174.9300658067722,&quot;holderChange&quot;:28.13092979127135,&quot;liquidityChange&quot;:159.30090398443699,&quot;volumeChange&quot;:103.9576214734887,&quot;buyVolume&quot;:609255.5762927978,&quot;sellVolume&quot;:575935.5921710194,&quot;buyOrganicVolume&quot;:110895.4683521582,&quot;sellOrganicVolume&quot;:108264.17672659623,&quot;numBuys&quot;:4473,&quot;numSells&quot;:4504,&quot;numTraders&quot;:2897,&quot;numOrganicBuyers&quot;:203,&quot;numNetBuyers&quot;:1286},&quot;stats6h&quot;:{&quot;priceChange&quot;:14874.860218423217,&quot;holderChange&quot;:4638.59649122807,&quot;liquidityChange&quot;:1713.8024690616096,&quot;buyVolume&quot;:2397924.6598693635,&quot;sellVolume&quot;:2341299.6952053765,&quot;buyOrganicVolume&quot;:403843.26969506696,&quot;sellOrganicVolume&quot;:342738.314210198,&quot;numBuys&quot;:24034,&quot;numSells&quot;:20369,&quot;numTraders&quot;:7537,&quot;numOrganicBuyers&quot;:562,&quot;numNetBuyers&quot;:3474},&quot;stats24h&quot;:{&quot;priceChange&quot;:14874.860218423217,&quot;holderChange&quot;:4638.59649122807,&quot;liquidityChange&quot;:1713.8024690616096,&quot;buyVolume&quot;:2397924.6598693635,&quot;sellVolume&quot;:2341299.6952053765,&quot;buyOrganicVolume&quot;:403843.26969506696,&quot;sellOrganicVolume&quot;:342738.314210198,&quot;numBuys&quot;:24034,&quot;numSells&quot;:20369,&quot;numTraders&quot;:7537,&quot;numOrganicBuyers&quot;:566,&quot;numNetBuyers&quot;:3474},&quot;ctLikes&quot;:1,&quot;updatedAt&quot;:&quot;2025-08-26T15:00:46.076698525Z&quot;},{&quot;id&quot;:&quot;4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R&quot;,&quot;name&quot;:&quot;Raydium&quot;,&quot;symbol&quot;:&quot;RAY&quot;,&quot;icon&quot;:&quot;https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R/logo.png&quot;,&quot;decimals&quot;:6,&quot;dev&quot;:&quot;Es2gApD6MZBhUPN143xwYfrLt4H3Vr53re7Z6hs7kWGp&quot;,&quot;circSupply&quot;:268082943.027629,&quot;totalSupply&quot;:554998330.442221,&quot;tokenProgram&quot;:&quot;TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA&quot;,&quot;firstPool&quot;:{&quot;id&quot;:&quot;AWTtKpyXz71dZaJGLqR2JSGoRY7t86YRui45Ym7rv9NX&quot;,&quot;createdAt&quot;:&quot;2024-06-10T06:00:28.246Z&quot;},&quot;holderCount&quot;:252246,&quot;audit&quot;:{&quot;mintAuthorityDisabled&quot;:true,&quot;freezeAuthorityDisabled&quot;:true,&quot;topHoldersPercentage&quot;:77.26324560174743},&quot;organicScore&quot;:93.11052450050043,&quot;organicScoreLabel&quot;:&quot;high&quot;,&quot;isVerified&quot;:true,&quot;cexes&quot;:[&quot;Binance&quot;,&quot;OKX&quot;,&quot;Upbit&quot;,&quot;Bitget&quot;,&quot;Kraken&quot;,&quot;KuCoin&quot;,&quot;MEXC&quot;,&quot;Gate.io&quot;],&quot;tags&quot;:[&quot;birdeye-trending&quot;,&quot;community&quot;,&quot;strict&quot;,&quot;verified&quot;],&quot;fdv&quot;:1881621505.1780553,&quot;mcap&quot;:908886753.533621,&quot;usdPrice&quot;:3.3903192171385177,&quot;priceBlockId&quot;:362656541,&quot;liquidity&quot;:31160321.786434103,&quot;stats5m&quot;:{&quot;priceChange&quot;:0.5160598871017653,&quot;holderChange&quot;:0.7098711212609995,&quot;liquidityChange&quot;:0.15361361568511311,&quot;volumeChange&quot;:89.89533612850494,&quot;buyVolume&quot;:58962.51179714173,&quot;sellVolume&quot;:43442.54350137581,&quot;buyOrganicVolume&quot;:53.87974513556801,&quot;sellOrganicVolume&quot;:53.859418268746865,&quot;numBuys&quot;:156,&quot;numSells&quot;:82,&quot;numTraders&quot;:44,&quot;numOrganicBuyers&quot;:1,&quot;numNetBuyers&quot;:7},&quot;stats1h&quot;:{&quot;priceChange&quot;:0.28541065856953346,&quot;holderChange&quot;:0.7247505300861316,&quot;liquidityChange&quot;:0.847498297520568,&quot;volumeChange&quot;:-32.96632414129571,&quot;buyVolume&quot;:292408.609092258,&quot;sellVolume&quot;:379430.3113834437,&quot;buyOrganicVolume&quot;:1811.1630026545834,&quot;sellOrganicVolume&quot;:6597.691238258247,&quot;numBuys&quot;:1376,&quot;numSells&quot;:1073,&quot;numTraders&quot;:264,&quot;numOrganicBuyers&quot;:6,&quot;numNetBuyers&quot;:37},&quot;stats6h&quot;:{&quot;priceChange&quot;:1.6355703010223137,&quot;holderChange&quot;:0.7247505300861316,&quot;liquidityChange&quot;:1.5697089900678318,&quot;volumeChange&quot;:56.23518036317856,&quot;buyVolume&quot;:1998184.9873964062,&quot;sellVolume&quot;:1890458.4150806938,&quot;buyOrganicVolume&quot;:34479.530571959054,&quot;sellOrganicVolume&quot;:122434.62251425728,&quot;numBuys&quot;:9800,&quot;numSells&quot;:7528,&quot;numTraders&quot;:1277,&quot;numOrganicBuyers&quot;:47,&quot;numNetBuyers&quot;:220},&quot;stats24h&quot;:{&quot;priceChange&quot;:-1.590896994081666,&quot;holderChange&quot;:0.7955884997302751,&quot;liquidityChange&quot;:-1.580520982436935,&quot;volumeChange&quot;:-28.14304610847307,&quot;buyVolume&quot;:9074407.01151623,&quot;sellVolume&quot;:8830087.77226829,&quot;buyOrganicVolume&quot;:305325.6878560772,&quot;sellOrganicVolume&quot;:429895.4692082701,&quot;numBuys&quot;:44005,&quot;numSells&quot;:36485,&quot;numTraders&quot;:4670,&quot;numOrganicBuyers&quot;:214,&quot;numNetBuyers&quot;:937},&quot;ctLikes&quot;:26,&quot;smartCtLikes&quot;:12,&quot;updatedAt&quot;:&quot;2025-08-26T15:00:46.076843927Z&quot;}]</code></pre>
+                                        </div>
+                                        <div class="card-footer">
+                                            <button class="btn btn-outline-secondary btn-sm copyButton" type="button" data-clipboard-action="copy" data-clipboard-target="#copyText-525eb321-a468-452e-92c5-2108c2eb59ba">Copy to Clipboard</button>
+                                        </div>
+                                </div>
+                            </div>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                        <div class="col-sm-12 mb-3">
+                            <div class="card-deck">
+                            <div class="card border-info" style="width: 50rem;">
+                                <div class="card-body">
+                                    <h5 class="card-title text-uppercase text-white text-center bg-info">Console Logs</h5>
+                                    <div class="dyn-height">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered">
+                                        <thead class="thead-light text-center"><tr><th>Log Messages</th></tr></thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td style="word-wrap: break-word;min-width: 160px;max-width: 160px;"><pre><code class="prettyPrint">Selected category:toptraded</code></pre></td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="word-wrap: break-word;min-width: 160px;max-width: 160px;"><pre><code class="prettyPrint">Selected interval:5m</code></pre></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="row">
+                            <div class="card border-info">
+                                <div class="card-body">
+                                <h5 class="card-title text-uppercase text-white text-center bg-info">Test Information</h5>
+                                    <div class="table-responsive text-nowrap">
+                                        <table class="datatable table table-hover">
+                                        <thead><tr class="text-center"><th>Name</th><th>Passed</th><th>Failed</th><th>Skipped</th></tr></thead>
+                                            <tbody>
+                                                <tr >
+                                                    <td >Status code is 200</td>
+                                                    <td class="text-center bg-success">1</td>
+                                                    <td class="text-center ">0</td>
+                                                    <td class="text-center ">0</td>
+                                                </tr>
+                                                <tr >
+                                                    <td >Response is an array of tokens</td>
+                                                    <td class="text-center bg-success">1</td>
+                                                    <td class="text-center ">0</td>
+                                                    <td class="text-center ">0</td>
+                                                </tr>
+                                                <tr >
+                                                    <td >Token Fartcoin structure</td>
+                                                    <td class="text-center bg-success">1</td>
+                                                    <td class="text-center ">0</td>
+                                                    <td class="text-center ">0</td>
+                                                </tr>
+                                                <tr >
+                                                    <td >Token JLP structure</td>
+                                                    <td class="text-center bg-success">1</td>
+                                                    <td class="text-center ">0</td>
+                                                    <td class="text-center ">0</td>
+                                                </tr>
+                                                <tr >
+                                                    <td >Token DISMISSED structure</td>
+                                                    <td class="text-center bg-success">1</td>
+                                                    <td class="text-center ">0</td>
+                                                    <td class="text-center ">0</td>
+                                                </tr>
+                                                <tr >
+                                                    <td >Token BRAVEHEART structure</td>
+                                                    <td class="text-center bg-success">1</td>
+                                                    <td class="text-center ">0</td>
+                                                    <td class="text-center ">0</td>
+                                                </tr>
+                                                <tr >
+                                                    <td >Token RAY structure</td>
+                                                    <td class="text-center bg-success">1</td>
+                                                    <td class="text-center ">0</td>
+                                                    <td class="text-center ">0</td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr class="bg-light">
+                                                    <td><strong>Total</strong></td>
+                                                    <td class="text-center">7</td>
+                                                    <td class="text-center">0</td>
+                                                    <td class="text-center">0</td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                    <div class="row d-none">
+                                    <div class="col-sm-12 mb-3">
+                                        <div class="card-deck">
+                                        <div class="card border-danger" style="width: 50rem;">
+                                            <div class="card-body">
+                                                <h5 class="card-title text-uppercase text-white text-center bg-danger">Test Failure</h5>
+                                                <div class="table-responsive">
+                                                    <table class="table table-hover">
+                                                    <thead><tr class="text-nowrap"><th>Test Name</th><th>Assertion Error</th></tr></thead>
+                                                        <tbody>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.2.1/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/v/bs4/dt-1.10.18/datatables.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/remarkable/1.7.1/remarkable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<!-- Set slider initial position depending on the localstorage state -->
+
+<script>
+(function () {
+  var sliderChecked = true;
+  if (localStorage.getItem('theme') === 'theme-light') {
+    setTheme('theme-light');
+    sliderChecked = false;
+  } else {
+    setTheme('theme-dark');
+    sliderChecked = true;
+  }
+  $(document).ready( function () {
+    document.getElementById('slider').checked = sliderChecked;
+  });
+})();
+</script>
+
+<!-- Data Table Configuration -->
+
+<script>
+$(document).ready( function () {
+    $('.datatable').DataTable({
+        "retrieve": true,
+        "paging": false,
+        "info": false,
+        "fixedColumns":   {
+            "heightMatch": 'none'
+        }
+    });
+});
+</script>
+
+<!-- Tooltip Configuration -->
+
+<script>
+$(document).ready(function() {
+    $('[data-toggle="tooltip"]').tooltip({
+        trigger : 'hover'
+    })
+})
+</script>
+
+<!-- Show/Hide The Folders -->
+
+<script>
+$('#openAll').on('click', function(e) {
+let clickCount = $(this).data("clickCount") || 1
+switch (clickCount){
+    case 1:
+            $('#folder-c3961428-af39-44e6-891a-6a6dfb18eb8f-iteration-0').removeClass('collapsed')
+            $('#folder-collapse-c3961428-af39-44e6-891a-6a6dfb18eb8f-iteration-0').addClass('show')
+        $('#openAll').html("Collapse Folders");
+        break;
+    case 2:
+            $('#folder-c3961428-af39-44e6-891a-6a6dfb18eb8f-iteration-0').addClass('collapsed')
+            $('#folder-collapse-c3961428-af39-44e6-891a-6a6dfb18eb8f-iteration-0').removeClass('show')
+        $('#openAll').html("Expand Folders");
+        break;
+}
+clickCount = clickCount > 1 ? 1 : ++clickCount;
+$(this).data("clickCount", clickCount)
+})
+</script>
+
+<!-- Show/Hide The Requests -->
+
+<script>
+$('#openAllRequests').on('click', function(e) {
+let clickCount = $(this).data("clickCount") || 1
+switch (clickCount){
+    case 1:
+            $('#requests-f3f48592-53ac-4997-ac7a-88809bfb36aa').removeClass('collapsed')
+            $('#collapse-f3f48592-53ac-4997-ac7a-88809bfb36aa').removeClass('collapsed')
+            $('#requests-f3f48592-53ac-4997-ac7a-88809bfb36aa').addClass('show')
+            $('#collapse-f3f48592-53ac-4997-ac7a-88809bfb36aa').addClass('show')
+        $('#openAllRequests').html("Collapse Requests");
+        break;
+    case 2:
+            $('#requests-f3f48592-53ac-4997-ac7a-88809bfb36aa').addClass('collapsed')
+            $('#collapse-f3f48592-53ac-4997-ac7a-88809bfb36aa').addClass('collapsed')
+            $('#requests-f3f48592-53ac-4997-ac7a-88809bfb36aa').removeClass('show')
+            $('#collapse-f3f48592-53ac-4997-ac7a-88809bfb36aa').removeClass('show')
+        $('#openAllRequests').html("Expand Requests");
+        break;
+}
+clickCount = clickCount > 1 ? 1 : ++clickCount;
+$(this).data("clickCount", clickCount)
+})
+</script>
+
+<!-- Show/Hide The Skipped Tests -->
+
+<script>
+$('#openAllSkipped').on('click', function(e) {
+let clickCount = $(this).data("clickCount") || 1
+switch (clickCount){
+    case 1:
+            $('#skipped-f3f48592-53ac-4997-ac7a-88809bfb36aa').removeClass('collapsed')
+            $('#skipped-collapse-f3f48592-53ac-4997-ac7a-88809bfb36aa').removeClass('collapsed')
+            $('#skipped-f3f48592-53ac-4997-ac7a-88809bfb36aa').addClass('show')
+            $('#skipped-collapse-f3f48592-53ac-4997-ac7a-88809bfb36aa').addClass('show')
+        $('#openAllSkipped').html("Collapse All Skipped Tests");
+        break;
+    case 2:
+            $('#skipped-f3f48592-53ac-4997-ac7a-88809bfb36aa').addClass('collapsed')
+            $('#skipped-collapse-f3f48592-53ac-4997-ac7a-88809bfb36aa').addClass('collapsed')
+            $('#skipped-f3f48592-53ac-4997-ac7a-88809bfb36aa').removeClass('show')
+            $('#skipped-collapse-f3f48592-53ac-4997-ac7a-88809bfb36aa').removeClass('show')
+        $('#openAllSkipped').html("Expand All Skipped Tests");
+        break;
+}
+clickCount = clickCount > 1 ? 1 : ++clickCount;
+$(this).data("clickCount", clickCount)
+})
+</script>
+
+<!-- Show/Hide The Failures -->
+
+<script>
+$('#openAllFailed').on('click', function(e) {
+let clickCount = $(this).data("clickCount") || 1
+let failedItemContent
+let failedItemHeading
+switch (clickCount){
+    case 1:
+        $('#openAllFailed').html("Collapse All Failed Tests");
+        break;
+    case 2:
+        $('#openAllFailed').html("Expand All Failed Tests");
+        break;
+}
+clickCount = clickCount > 1 ? 1 : ++clickCount;
+$(this).data("clickCount", clickCount)
+})
+</script>
+
+<!-- Pretty Print the Response Body-->
+
+<script>
+function isJSON(data)
+{
+    var ret = true;
+    try {
+            JSON.parse(data);
+    }catch(e) {
+            ret = false;
+    }
+    return ret;
+}
+
+function isXML(data)
+{
+    return (data.length > 0 && data[0] === '<');
+}
+
+// see https://gist.github.com/sente/1083506/d2834134cd070dbcc08bf42ee27dabb746a1c54d#gistcomment-2254622
+function formatXML(data) {
+    const PADDING = ' '.repeat(2); // set desired indent size here
+    const reg = /(>)(<)(\/*)/g;
+    let pad = 0;
+    xml = data.replace(reg, '$1\r\n$2$3');
+
+    return xml.split('\r\n').map((node, index) => {
+        let indent = 0;
+        if (node.match(/.+<\/\w[^>]*>$/)) {
+            indent = 0;
+        } else if (node.match(/^<\/\w/) && pad > 0) {
+            pad -= 1;
+        } else if (node.match(/^<\w[^>]*[^\/]>.*$/)) {
+            indent = 1;
+        } else {
+            indent = 0;
+        }
+
+        pad += indent;
+        return PADDING.repeat(pad - indent) + node;
+    }).join('\r\n');
+}
+
+$(".prettyPrint").each(function () {
+        var data = $(this).text();
+        // Verify whether data is JSON
+        if(isJSON(data))
+        {
+                obj = JSON.parse(data);
+                data = JSON.stringify(obj, null, 2);
+        }
+        else if(isXML(data)) {
+            data = formatXML(data);
+        }
+        $(this).text(data);
+});
+</script>
+
+
+<!-- Copy Response Body To Clipboard -->
+
+<script>
+    var clipboard = new ClipboardJS('.copyButton');
+
+    clipboard.on('success', function(e) {
+        e.clearSelection();
+        $(".copyButton").addClass("bg-success text-white")
+        e.trigger.textContent = '✔ Copied!';
+        window.setTimeout(function() {
+            $(".copyButton").removeClass("bg-success text-white")
+            e.trigger.textContent = 'Copy to Clipboard';
+        }, 2000);
+    });
+    clipboard.on('error', function(e) {
+        e.clearSelection();
+        $(".copyButton").addClass("bg-danger text-white")
+        e.trigger.textContent = '✗ Not Copied';
+        window.setTimeout(function() {
+            $(".copyButton").removeClass("bg-danger text-white")
+            e.trigger.textContent = 'Copy to Clipboard';
+        }, 2000);
+    });
+
+</script>
+
+<!-- Render the Description Markdown and link in the test failures -->
+
+<script>
+    const remarkable = new Remarkable();
+
+    const descriptions = document.querySelectorAll(".renderMarkdown");
+    descriptions.forEach(description => {
+        description.innerHTML = renderHtmlFromMarkdown(description.textContent);
+    });
+    function renderHtmlFromMarkdown(markdown) {
+        return remarkable.render(trim(markdown));
+    }
+    function trim(string) {
+        return string ? string.replace(/^ +| +$/gm, "") : string;
+    }
+</script>
+
+<!-- Show/Hide The Toggles When Scrolling The Page -->
+
+<script>
+window.onscroll = function() {scrollFunction()};
+
+function scrollFunction() {
+  if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+    document.getElementById("topOfRequestsScreen").style.display = "block";
+    document.getElementById("topOfFailuresScreen").style.display = "block";
+    document.getElementById("topOfSkippedScreen").style.display = "block";
+    document.getElementById("openAll").style.display = "none";
+    document.getElementById("openAllRequests").style.display = "none";
+
+
+  } else {
+    document.getElementById("topOfRequestsScreen").style.display = "none";
+    document.getElementById("topOfFailuresScreen").style.display = "none";
+    document.getElementById("topOfSkippedScreen").style.display = "none";
+    document.getElementById("openAll").style.display = "block";
+    document.getElementById("openAllRequests").style.display = "block";
+
+  }
+}
+
+function topFunction() {
+  document.body.scrollTop = 0;
+  document.documentElement.scrollTop = 0;
+}
+</script>
+
+<!-- Creates The Iteration Tabs -->
+
+<script type="text/javascript">
+    "use strict";
+
+window.onload = function () {
+
+  // set display for all blocks of response
+  var allItems = document.querySelectorAll('[class*=iteration-]');
+  allItems.forEach(function(elem){
+    elem.style.display = 'block';
+  });
+
+   
+  let totalIterations = 1;
+   
+
+  let menu = document.querySelector('#execution-menu .nav');
+
+  for(var i = 0; i < totalIterations; i++)
+  {
+    let li = document.createElement('li');
+    li.appendChild(document.createTextNode((i + 1)));
+    li.setAttribute('id', 'iteration-' + i);
+    li.classList.add("custom-tab");
+    li.classList.add("itPassed");
+
+    li.addEventListener('click', function() {
+      //set display to none for all except row
+      let allItems = document.querySelectorAll('[class*=iteration-]:not(.row)');
+      allItems.forEach(function(elem) {
+        elem.style.display = 'none';
+      })
+
+      let allMenus = document.querySelectorAll('[id*=iteration-]');
+      allMenus.forEach(function(elem){
+        elem.style.borderBottom = 'none';
+      })
+
+      this.style.borderBottom = 'solid 3px #032a33';
+
+      let items = document.querySelectorAll("." + this.id + ':not(.row)');
+      items.forEach(function(elem) {
+        elem.style.display = elem.style.display == 'block' ? 'none' : 'block';
+      })
+    });
+    menu.appendChild(li);
+  }
+
+  //shows first tab data
+  document.getElementById('iteration-0').click();
+  document.getElementById('iterationSelected').innerHTML = `Iteration ${document.getElementById('iteration-0').innerHTML} selected`
+
+}
+</script>
+
+<!-- Create the Selected Iteration Label -->
+
+<script>
+$(document).ready(function(){
+    $(function() {
+        $("#iterationList li").click(function() {
+            document.getElementById('iterationSelected').innerHTML = "Iteration " + this.innerHTML + " selected"
+        });
+    });
+});
+</script>
+
+<!-- Filter Action for the Iterations -->
+
+<script>
+$("#filterInput").on("input paste", function() {
+    var value = $(this).val();
+    $("#iterationList li").filter(function() {
+	    $("#showOnlyFailures").data("clickCount") ? $("#showOnlyFailures").click():null;
+        $(this).toggle($(this).text().indexOf(value) > -1)
+    });
+});
+</script>
+
+<!-- Showing the Failed Interations -->
+
+<script>
+$('#showOnlyFailures').on('click', function(e) {
+    let clickCount = $(this).data("clickCount") || 1
+	$("#filterInput").val()!="" && clickCount==1 ? $("#filterInput").val('').trigger('input'): null;
+    let selectedIteration = $('#iterationList li').filter(function () {
+        return $(this).css('border-bottom').indexOf("solid") > -1 && $(this).hasClass('itFailed');
+    });
+    selectedIteration.length || clickCount > 1 ? null : $("#iterationList li.itFailed")[0].click()
+    $("#iterationList li.itPassed").toggle()
+    $("div.bg-success [id*=requests]").parents('[class^="row iteration-"]').toggle();
+    clickCount = clickCount > 1 ? 1 : ++clickCount;
+    clickCount > 1 ? $("#showOnlyFailures").html("Show All Iterations") : $("#showOnlyFailures").html("Show Failed Iterations");
+    $(this).data("clickCount", clickCount)
+})
+</script>
+</body>
+</html>
