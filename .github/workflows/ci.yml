@@ -7,6 +7,7 @@ on:
 jobs:
   run-tests:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -29,7 +30,7 @@ jobs:
           publish_dir: ./reports
           publish_branch: gh-pages
           destination_dir: pr-${{ github.event.pull_request.number }}
-          force_orphan: false   # keep history of previous PR reports
+          force_orphan: false
 
       - name: Add report link to PR summary
         if: always()
