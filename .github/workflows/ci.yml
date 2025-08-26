@@ -25,12 +25,6 @@ jobs:
       - name: Run API tests
         run: node run-tests.js
 
-      - name: Prepare PR-specific report folder
-        run: |
-          mkdir -p ./reports/pr-${{ github.event.pull_request.number }}
-          shopt -s extglob
-          mv ./reports/!(pr-${{ github.event.pull_request.number }}) ./reports/pr-${{ github.event.pull_request.number }}/ || true
-
       - name: Upload PR test reports
         uses: actions/upload-artifact@v4
         with:
