@@ -32,7 +32,7 @@ jobs:
           mv ./reports/!(pr-${{ github.event.pull_request.number }}) ./reports/pr-${{ github.event.pull_request.number }}/ || true
 
       - name: Upload PR test reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: "API Test Reports - PR #${{ github.event.pull_request.number }}"
           path: ./reports
