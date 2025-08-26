@@ -1,14 +1,15 @@
 name: API Tests
 
 on:
-  push:
-    branches: [ main ]
   pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
 
 jobs:
   run-tests:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -24,13 +25,8 @@ jobs:
       - name: Run API tests
         run: node run-tests.js
 
-      - name: Upload test reports as artifacts
-        uses: actions/upload-artifact@v3
+      - name: Upload PR test reports
+        uses: actions/upload-artifact@v4
         with:
-          name: api-test-reports
-          path: reports/
-
-      - name: Add index.html link to Action summary
-        if: always()
-        run: |
-          echo "📄 [View Test Reports](./reports/index.html)" >> $GITHUB_STEP_SUMMARY
+          name: "API Test Reports - PR #${{ github.event.pull_request.number }}"
+          path: ./reports
