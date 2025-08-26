@@ -4,10 +4,14 @@ on:
   pull_request:
     branches: [ main ]
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
   run-tests:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -23,16 +27,26 @@ jobs:
       - name: Run API tests
         run: node run-tests.js
 
-      - name: Deploy test reports to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Prepare PR-specific report folder
+        run: |
+          mkdir -p ./reports/pr-${{ github.event.pull_request.number }}
+          mv ./reports/* ./reports/pr-${{ github.event.pull_request.number }}/
+
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v2
+
+      - name: Upload test reports
+        uses: actions/upload-pages-artifact@v1
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./reports
-          publish_branch: gh-pages
-          destination_dir: pr-${{ github.event.pull_request.number }}
-          force_orphan: false
+          path: ./reports
+
+      - name: Deploy test reports
+        id: deployment
+        uses: actions/deploy-pages@v1
+        with:
+          artifact: ./reports
 
       - name: Add report link to PR summary
         if: always()
         run: |
-          echo "📄 [View API Test Reports](https://${{ github.repository_owner }}.github.io/${{ github.repository }}/pr-${{ github.event.pull_request.number }}/index.html)" >> $GITHUB_STEP_SUMMARY
+          echo "📄 [View API Test Reports for PR #${{ github.event.pull_request.number }}](${{ steps.deployment.outputs.page_url }}/pr-${{ github.event.pull_request.number }}/index.html)" >> $GITHUB_STEP_SUMMARY
