@@ -1,22 +1,26 @@
 [
   {
     "case": "Invalid query value",
+    "query": "invalidValue",
     "expectedStatus": 400,
-    "query": "invalidValue"
+    "expectedErrorSubstring": "Invalid tag provided"
   },
   {
     "case": "Empty query value",
+    "query": "",
     "expectedStatus": 400,
-    "query": ""
+    "expectedErrorSubstring": "Invalid tag provided"
   },
   {
     "case": "Query param is null",
+    "query": null,
     "expectedStatus": 400,
-    "query": null
+    "expectedErrorSubstring": "Invalid tag provided"
   },
   {
     "case": "Query param missing completely",
+    "query": "{{omit}}",
     "expectedStatus": 400,
-    "query": "{{omit}}"
+    "expectedErrorSubstring": "Expected required property"
   }
 ]
